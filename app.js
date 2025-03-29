@@ -1,6 +1,7 @@
 const routes = {
     "/": "home.html",
-    "/about": "about.html"
+    "/about": "about.html",
+    "/color": "setcolor.html"
 };
 
 function route(event, page) {
