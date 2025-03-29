@@ -3,320 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shader System</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Voice-based Chat with AI</title>
 </head>
-<body class="bg-blue-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-md">
-        <!-- Login Page -->
-        <div id="loginPage" class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
-            <h1 class="text-2xl font-bold text-blue-800 mb-6 text-center">Shader System Login</h1>
-            
-            <div class="mb-4">
-                <label for="userKeyLogin" class="block text-sm font-medium text-blue-700 mb-1">User Key:</label>
-                <input type="text" id="userKeyLogin" placeholder="Enter your user key" 
-                    class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            
-            <div class="mb-6">
-                <label for="transactionId" class="block text-sm font-medium text-blue-700 mb-1">Transaction ID:</label>
-                <input type="text" id="transactionId" placeholder="Enter your transaction ID" 
-                    class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            
-            <button id="loginButton" 
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
-                </svg>
-                Login
-            </button>
-        </div>
-
-        <!-- User Settings Page (initially hidden) -->
-        <div id="settingsPage" class="hidden">
-            <div class="flex justify-between items-center mb-4">
-                <h1 class="text-2xl font-bold text-blue-800">User Settings</h1>
-                <button id="logoutButton" class="text-blue-600 hover:text-blue-800">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                </button>
-            </div>
-
-            <div class="grid grid-cols-1 gap-6">
-                <!-- User Info Card -->
-                <div class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
-                    <h2 class="text-xl font-semibold text-blue-700 mb-3">Account Information</h2>
-                    <p class="text-gray-700"><span class="font-medium">User Key:</span> <span id="userKeyDisplay"></span></p>
-                    <p class="text-gray-700"><span class="font-medium">Registrator:</span> <span id="registratorDisplay"></span></p>
-                    <p class="text-gray-700"><span class="font-medium">Connected Devices:</span> <span id="deviceCountDisplay"></span></p>
-                </div>
-                
-                <!-- Shader Color Settings Card -->
-                <div class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
-                    <h2 class="text-xl font-semibold text-blue-700 mb-4">Shader Color Settings</h2>
-                    
-                    <div class="mb-4">
-                        <label for="colorPicker" class="block text-sm font-medium text-blue-700 mb-1">Choose a color:</label>
-                        <input type="color" id="colorPicker" value="#ffff00" 
-                            class="h-12 w-24 border border-blue-300 rounded-md cursor-pointer">
-                        <div id="colorPreview" class="mt-2 h-8 w-full rounded-md border border-blue-300"></div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <label for="alpha" class="block text-sm font-medium text-blue-700 mb-1">
-                            Alpha (Transparency): <span id="alphaValue">0.8</span>
-                        </label>
-                        <input type="range" id="alpha" min="0" max="1" step="0.01" value="0.8"
-                            class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer">
-                    </div>
-                    
-                    <button id="saveColorButton" 
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                        Save Color Settings
-                    </button>
-                </div>
-                
-                <!-- Device Reset Card -->
-                <div class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
-                    <h2 class="text-xl font-semibold text-blue-700 mb-4">Device Management</h2>
-                    <p class="text-gray-600 mb-4">Reset all connected devices. This action cannot be undone.</p>
-                    
-                    <button id="resetDevicesButton" 
-                        class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-                        </svg>
-                        Reset All Devices
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+<body>
+    <h1>Voice-based Chat with AI</h1>
+    <button id="start">Start Listening</button>
+    <p id="status">Status: Waiting for input...</p>
+    <p id="response"></p>
 
     <script>
-        // API endpoints
-        const API_BASE_URL = 'https://smkn1-lsm.sch.id/esdate/public';
-        const API_ENDPOINTS = {
-            login: `${API_BASE_URL}/connect`,
-            updateColor: `${API_BASE_URL}/connect`,
-            resetDevices: `${API_BASE_URL}/connect`  // We'll use the same endpoint with different parameters
+        // Web Speech API - Speech Recognition (Speech to Text)
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'id-ID'; // Set language to Indonesian, or change based on preference
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        // Web Speech API - Speech Synthesis (Text to Speech)
+        const synth = window.speechSynthesis;
+
+        const API_KEY = 'sk-u2Uzr4vDRc6yhZmyI13zzvUU8Lca1FhpNFZsD5jNz4zfZmB8'; // Ganti dengan API Key Anda
+        const API_URL = 'https://api.chatanywhere.tech'; // Ubah menjadi api.chatanywhere.org jika di luar negeri
+
+        // Function to speak (Text to Speech)
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID'; // Indonesian language
+            synth.speak(utterance);
+        }
+
+        // Function to handle when Speech Recognition starts
+        recognition.onstart = function() {
+            document.getElementById('status').textContent = "Status: Listening...";
         };
-        
-        // Session management
-        let userSession = null;
-        
-        // Check if user is already logged in
-        function checkSession() {
-            const savedSession = localStorage.getItem('shaderSession');
-            if (savedSession) {
-                userSession = JSON.parse(savedSession);
-                showSettingsPage();
-                updateUserInfo();
-            }
-        }
-        
-        // Login functionality
-        const loginButton = document.getElementById('loginButton');
-        loginButton.addEventListener('click', () => {
-            const userKey = document.getElementById('userKeyLogin').value;
-            const transactionId = document.getElementById('transactionId').value;
-            
-            if (!userKey || !transactionId) {
-                showNotification('Please enter both User Key and Transaction ID', 'error');
-                return;
-            }
-            
-            // Using the Connect endpoint with trxid parameter
-            axios.post(API_ENDPOINTS.login, {
-                user_key: userKey,
-                trxid: transactionId
-            }).then(response => {
-                if (response.data.status) {
-                    userSession = response.data.data;
-                    localStorage.setItem('shaderSession', JSON.stringify(userSession));
-                    showSettingsPage();
-                    updateUserInfo();
-                    showNotification('Login successful!', 'success');
-                } else {
-                    showNotification(response.data.reason || 'Invalid credentials', 'error');
-                }
-            }).catch(error => {
-                console.error(error);
-                showNotification('Login failed. Please try again.', 'error');
-            });
+
+        // Function to handle when Speech Recognition returns a result
+        recognition.onresult = async function(event) {
+            const speechResult = event.results[0][0].transcript;
+            document.getElementById('response').textContent = "You said: " + speechResult;
+            document.getElementById('status').textContent = "Status: Thinking...";
+
+            // Kirim permintaan ke API ChatAnywhere
+            const aiResponse = await getAIResponse(speechResult);
+
+            // Speak out AI's response (Text to Speech)
+            speak(aiResponse);
+
+            // Update UI with AI's response
+            document.getElementById('response').textContent = "AI: " + aiResponse;
+            document.getElementById('status').textContent = "Status: Done";
+        };
+
+        // Error handling
+        recognition.onerror = function(event) {
+            document.getElementById('status').textContent = "Status: Error - " + event.error;
+        };
+
+        // Start listening when user clicks the button
+        document.getElementById('start').addEventListener('click', function() {
+            recognition.start();
         });
-        
-        // Logout functionality
-        const logoutButton = document.getElementById('logoutButton');
-        logoutButton.addEventListener('click', () => {
-            localStorage.removeItem('shaderSession');
-            userSession = null;
-            showLoginPage();
-            showNotification('Logged out successfully', 'success');
-        });
-        
-        // Color picker functionality
-        const colorPicker = document.getElementById('colorPicker');
-        const colorPreview = document.getElementById('colorPreview');
-        const alpha = document.getElementById('alpha');
-        const alphaValue = document.getElementById('alphaValue');
-        
-        // Update color preview
-        function updateColorPreview() {
-            const color = colorPicker.value;
-            const transparency = alpha.value;
-            colorPreview.style.backgroundColor = color;
-            colorPreview.style.opacity = transparency;
-            alphaValue.textContent = transparency;
-        }
-        
-        // Event listeners for color updates
-        colorPicker.addEventListener('input', updateColorPreview);
-        alpha.addEventListener('input', updateColorPreview);
-        
-        // Save color settings
-        const saveColorButton = document.getElementById('saveColorButton');
-        saveColorButton.addEventListener('click', () => {
-            if (!userSession) {
-                showNotification('You must be logged in', 'error');
-                return;
-            }
-            
-            const color = colorPicker.value;
-            const transparency = alpha.value;
-            
-            // Convert hex color to RGBA for shader
-            const rgb = hexToRgb(color);
-            const shaderColor = `vec4(${rgb.r / 255}, ${rgb.g / 255}, ${rgb.b / 255}, ${transparency})`;
-            
-            axios.post(API_ENDPOINTS.updateColor, {
-                user_key: userSession.user_key,
-                shader_color: shaderColor
-            }).then(response => {
-                if (response.data.status) {
-                    userSession.shader_color = shaderColor;
-                    localStorage.setItem('shaderSession', JSON.stringify(userSession));
-                    showNotification('Shader color saved successfully!', 'success');
-                } else {
-                    showNotification(response.data.reason || 'Failed to save shader color', 'error');
-                }
-            }).catch(error => {
-                console.error(error);
-                showNotification('Failed to save shader color.', 'error');
-            });
-        });
-        
-        // Reset devices functionality
-        const resetDevicesButton = document.getElementById('resetDevicesButton');
-        resetDevicesButton.addEventListener('click', () => {
-            if (!userSession) {
-                showNotification('You must be logged in', 'error');
-                return;
-            }
-            
-            if (confirm('Are you sure you want to reset all devices? This action cannot be undone.')) {
-                // Using the Connect endpoint with a reset_devices parameter
-                axios.post(API_ENDPOINTS.resetDevices, {
-                    user_key: userSession.user_key,
-                    reset_devices: true  // Special parameter to indicate device reset
-                }).then(response => {
-                    if (response.data.status) {
-                        // Update the session with empty devices
-                        userSession.devices = "";
-                        localStorage.setItem('shaderSession', JSON.stringify(userSession));
-                        updateUserInfo();
-                        showNotification('All devices have been reset successfully!', 'success');
-                    } else {
-                        showNotification(response.data.reason || 'Failed to reset devices', 'error');
-                    }
-                }).catch(error => {
-                    console.error(error);
-                    showNotification('Failed to reset devices.', 'error');
+
+        // Function to get response from AI API
+        async function getAIResponse(userInput) {
+            const requestBody = {
+                model: "gpt-3.5-turbo",  // Atau gpt-4o-mini sesuai dengan model yang Anda pilih
+                prompt: userInput,
+                max_tokens: 150,
+                temperature: 0.7,
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`, // Gunakan API Key
+                    },
+                    body: JSON.stringify(requestBody),
                 });
-            }
-        });
-        
-        // UI helpers
-        function showLoginPage() {
-            document.getElementById('loginPage').classList.remove('hidden');
-            document.getElementById('settingsPage').classList.add('hidden');
-        }
-        
-        function showSettingsPage() {
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('settingsPage').classList.remove('hidden');
-            // Initialize color preview
-            updateColorPreview();
-        }
-        
-        function updateUserInfo() {
-            document.getElementById('userKeyDisplay').textContent = userSession.user_key;
-            document.getElementById('registratorDisplay').textContent = userSession.registrator || 'N/A';
-            
-            // Count devices
-            const deviceCount = userSession.devices ? userSession.devices.split(',').length : 0;
-            document.getElementById('deviceCountDisplay').textContent = deviceCount;
-            
-            // Set color if available
-            if (userSession.shader_color) {
-                try {
-                    // Try to parse shader color back to hex
-                    const colorRegex = /vec4\(([\d.]+),\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)\)/;
-                    const match = userSession.shader_color.match(colorRegex);
-                    
-                    if (match) {
-                        const r = Math.round(parseFloat(match[1]) * 255);
-                        const g = Math.round(parseFloat(match[2]) * 255);
-                        const b = Math.round(parseFloat(match[3]) * 255);
-                        const a = parseFloat(match[4]);
-                        
-                        const hexColor = rgbToHex(r, g, b);
-                        colorPicker.value = hexColor;
-                        alpha.value = a;
-                        
-                        updateColorPreview();
-                    }
-                } catch (e) {
-                    console.error("Failed to parse shader color", e);
+
+                const data = await response.json();
+                if (data && data.choices && data.choices[0]) {
+                    return data.choices[0].text.trim(); // Mengembalikan respons dari AI
+                } else {
+                    return "Maaf, saya tidak mengerti permintaan Anda.";
                 }
+            } catch (error) {
+                console.error("Error calling API:", error);
+                return "Terjadi kesalahan, coba lagi nanti.";
             }
         }
-        
-        // Helper functions
-        function hexToRgb(hex) {
-            const bigint = parseInt(hex.slice(1), 16);
-            const r = (bigint >> 16) & 255;
-            const g = (bigint >> 8) & 255;
-            const b = bigint & 255;
-            return { r, g, b };
-        }
-        
-        function rgbToHex(r, g, b) {
-            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-        }
-        
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-md shadow-lg ${
-                type === 'success' ? 'bg-green-500' : 'bg-red-500'
-            } text-white max-w-xs z-50`;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            // Remove notification after 3 seconds
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-        
-        // Check session on load
-        checkSession();
     </script>
 </body>
 </html>
