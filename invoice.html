@@ -1,0 +1,414 @@
+  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRIS Payment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-md">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-1xl font-bold text-blue-600">XN QRIS</h2>
+                <div id="payment-status" class="flex items-center">
+                    <span id="status-icon" class="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center mr-2">
+                        <i class="fas fa-hourglass-half animate-pulse"></i>
+                    </span>
+                      <h3  id="status-text"  class="text-sm font-medium text-blue-600">Menunggu Pembayaran</h3>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="bg-white rounded-lg shadow-md p-6 text-center mb-6">
+            <div class="animate-spin inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mb-4"></div>
+            <p class="text-gray-600">Memuat informasi pembayaran...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-container" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <div class="bg-red-100 text-red-700 p-4 rounded mb-4 flex items-center">
+                <i class="fas fa-exclamation-circle mr-2 text-xl"></i>
+                <p id="error-message">Terjadi kesalahan saat memuat QRIS</p>
+            </div>
+            <button id="retry-button" class="w-full bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-600 transition">
+                <i class="fas fa-redo mr-2"></i> Coba Lagi
+            </button>
+        </div>
+
+        <!-- Payment Container -->
+        <div id="payment-container" class="hidden">
+            <!-- QRIS Code -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-qrcode text-blue-500 mr-2"></i> QRIS PAYMENT
+                </h2>
+                <div class="flex flex-col items-center">
+                    <div class="mb-4 p-4 bg-white border-2 border-blue-200 rounded-lg shadow-inner">
+                        <img id="qris-image" src="" alt="QRIS Code" class="w-full max-w-xs mx-auto">
+                    </div>
+                    <p id="qris-name" class="text-center font-medium mb-2">QRIS Payment</p>
+                    <p class="text-center text-sm text-gray-500 mb-4">
+                        <i class="fas fa-mobile-alt mr-1"></i> Scan QR code dengan aplikasi e-wallet atau mobile banking
+                    </p>
+                </div>
+            </div>
+
+            <!-- Payment Details -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-info-circle text-blue-500 mr-2"></i> Detail Pembayaran
+                </h2>
+                
+                <div class="mb-6 pb-4 border-b">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">ID Transaksi:</span>
+                        <span id="transaction-id" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Produk:</span>
+                        <span id="item-name" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Harga:</span>
+                        <span id="price" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Kode Unik:</span>
+                        <span id="unique-code" class="font-medium text-blue-600">-</span>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-lg font-bold">Total Pembayaran:</span>
+                        <div class="flex items-center">
+                            <span id="total-amount" class="text-lg font-bold text-blue-600">-</span>
+                            <button id="copy-amount" class="ml-2 text-blue-500 hover:text-blue-700">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-blue-700">
+                        <i class="fas fa-info-circle mr-1"></i> 
+                        Pastikan transfer <strong>tepat sesuai</strong> nominal diatas
+                    </p>
+                </div>
+
+                <!-- Countdown Timer -->
+                <div class="mt-4 flex justify-between items-center">
+                    <span class="text-gray-600 text-sm">Berlaku hingga:</span>
+                    <div class="text-sm font-medium text-gray-700 flex items-center">
+                        <i class="fas fa-clock mr-1 text-yellow-500"></i>
+                        <span id="countdown">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Verification -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <button id="check-payment" class="w-full bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-600 transition flex items-center justify-center">
+                    <i class="fas fa-sync-alt mr-2"></i> Cek Status Pembayaran
+                </button>
+            </div>
+
+            <!-- Payment Instruction -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-lg font-semibold mb-3 flex items-center">
+                    <i class="fas fa-info-circle text-blue-500 mr-2"></i> Cara Pembayaran:
+                </h2>
+                <div class="space-y-3">
+                    <div class="flex items-start">
+                        <div class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 mr-2">1</div>
+                        <p>Buka aplikasi e-wallet atau mobile banking Anda</p>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 mr-2">2</div>
+                        <p>Pilih opsi scan QRIS/QR Code</p>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 mr-2">3</div>
+                        <p>Scan QR code diatas</p>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 mr-2">4</div>
+                        <p>Masukkan nominal <strong id="instruction-amount">-</strong> (termasuk kode unik)</p>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5 mr-2">5</div>
+                        <p>Konfirmasi dan selesaikan pembayaran</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method List -->
+            <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                <h3 class="font-semibold mb-2 text-sm text-gray-600">QRIS didukung oleh:</h3>
+                <div class="grid grid-cols-4 gap-2">
+                    <div class="bg-gray-50 p-2 rounded text-center text-xs border">DANA</div>
+                    <div class="bg-gray-50 p-2 rounded text-center text-xs border">OVO</div>
+                    <div class="bg-gray-50 p-2 rounded text-center text-xs border">GoPay</div>
+                    <div class="bg-gray-50 p-2 rounded text-center text-xs border">LinkAja</div>
+                    <div class="bg-gray-50 p-2 rounded text-center text-xs border">ShopeePay</div>
+                    <div class="bg-gray-50 p-2 rounded text-center text-xs border">BCA</div>
+                    <div class="bg-gray-50 p-2 rounded text-center text-xs border">BRI</div>
+                    <div class="bg-gray-50 p-2 rounded text-center text-xs border">Mandiri</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success State -->
+        <div id="success-container" class="bg-white rounded-lg shadow-md p-6 hidden">
+            <div class="text-center">
+                <div class="text-5xl mb-4 text-green-500">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-green-700 mb-2">Pembayaran Berhasil</h2>
+                <p class="text-gray-600">Terima kasih atas pembelian Anda..</p>
+                <p class="text-gray-600 mb-6">Screenshoot halaman Ini sebagai Bukti Pembelian</p>
+                <div class="mt-6">
+                    <a href="/" class="block w-full bg-green-500 text-center text-white py-3 px-4 rounded-lg hover:bg-green-600 transition flex items-center justify-center">
+                        <i class="fas fa-arrow-right mr-2"></i> Kembali ke Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- ✅ Container untuk menampilkan key setelah pembayaran sukses -->
+<div id="user-key-container" class="bg-gray-100 rounded-lg p-4 mt-4 hidden">
+    <h3 class="text-lg font-semibold text-gray-700">Key:</h3>
+    <p id="user-key" class="text-lg font-bold text-green-600 bg-gray-200 p-2 rounded-lg break-all"></p>
+    <h3 class="text-lg font-semibold text-gray-700">Transaction Code:</h3>
+    <p id="trxid" class="text-lg font-bold text-blue-600 bg-gray-200 p-2 rounded-lg break-all"></p>
+    <p id="expired-date" class="text-sm text-gray-600 mt-2"></p>
+
+    <!-- Tombol Copy -->
+    <button id="copy-key" class="mt-3 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+        <i class="fas fa-copy"></i> Copy Key
+    </button>
+</div>
+
+
+        </div>
+    </div>
+
+    <script>
+ const API_URL = "https://xnorealszzid.my.id/api";
+const urlParams = new URLSearchParams(window.location.search);
+const transactionId = urlParams.get('trx');
+
+if (!transactionId) {
+    alert("Transaksi tidak ditemukan!");
+    window.location.href = "/";
+}
+
+let transactionData = null;
+let countdownInterval = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadInvoice();
+    document.getElementById('check-payment').addEventListener('click', checkPaymentStatus);
+    document.getElementById('copy-amount').addEventListener('click', copyAmount);
+});
+
+// ✅ Ambil detail invoice dari backend
+async function loadInvoice() {
+    showLoading();
+    hideError();
+    hidePaymentContainer();
+    
+    try {
+      const response = await fetch(`${API_URL}/get-invoice/${transactionId}`);
+        const result = await response.json();
+
+        if (result.success) {
+            transactionData = result.data;
+            updateUIWithTransactionData();
+            showPaymentContainer();
+            startCountdown();
+        } else {
+            showError("Invoice tidak ditemukan.");
+            setTimeout(() => window.location.href = "/", 2000);
+        }
+    } catch (error) {
+        showError("Gagal terhubung ke server.");
+    } finally {
+        hideLoading();
+    }
+}
+
+// ✅ Tampilkan data invoice ke UI
+function updateUIWithTransactionData() {
+    document.getElementById('transaction-id').textContent = transactionData.transaction_id;
+    document.getElementById('item-name').textContent = transactionData.item_name;
+    document.getElementById('price').textContent = formatCurrency(transactionData.price);
+    document.getElementById('unique-code').textContent = formatCurrency(transactionData.unique_code);
+    document.getElementById('total-amount').textContent = formatCurrency(transactionData.total_amount);
+    document.getElementById('instruction-amount').textContent = formatCurrency(transactionData.total_amount);
+    document.getElementById('qris-image').src = transactionData.qris_url;
+    document.getElementById('qris-name').textContent = transactionData.qris_name;
+}
+
+// ✅ Cek status pembayaran
+async function checkPaymentStatus() {
+    if (!transactionData) return;
+
+    setButtonLoading(true);
+
+    try {
+        const response = await fetch(`${API_URL}/check-payment/${transactionId}`);
+        const result = await response.json();
+
+        if (result.success && result.data.payment_status === "completed") {
+            updatePaymentStatus("completed");
+            clearInterval(countdownInterval);
+            showSuccessContainer();
+
+            // 🔥 Tampilkan Key di Halaman 🔥
+            document.getElementById('user-key-container').classList.remove('hidden');
+            document.getElementById('trxid').textContent = result.data.transaction_id;
+            document.getElementById('user-key').textContent = result.data.user_key;
+            document.getElementById('expired-date').textContent = result.data.expired_date ? `Masa Berlaku: ${result.data.expired_date}` : "Unlimited";
+
+        } else {
+            alert("Pembayaran belum ditemukan. Silakan coba lagi.");
+        }
+    } catch (error) {
+        alert("Gagal mengecek pembayaran.");
+    } finally {
+        setButtonLoading(false);
+    }
+}
+
+
+// ✅ Ubah status pembayaran di UI
+function updatePaymentStatus(status) {
+    const statusIcon = document.getElementById("status-icon");
+    const statusText = document.getElementById("status-text");
+
+    if (status === "completed") {
+      hidePaymentContainer();
+
+        statusIcon.innerHTML = '<i class="fas fa-check"></i>';
+        statusIcon.classList.replace('bg-blue-500', 'bg-green-500');
+        statusText.textContent = "Pembayaran Berhasil";
+        statusText.classList.replace('text-blue-600', 'text-green-600');
+
+        document.getElementById("check-payment").disabled = true;
+        document.getElementById("check-payment").textContent = "Lunas";
+        document.getElementById("check-payment").classList.replace('bg-blue-500', 'bg-gray-500');
+    } else {
+        statusIcon.innerHTML = '<i class="fas fa-hourglass-half animate-pulse"></i>';
+        statusIcon.classList.replace('bg-green-500', 'bg-blue-500');
+        statusText.textContent = "Menunggu Pembayaran";
+        statusText.classList.replace('text-green-600', 'text-blue-600');
+    }
+}
+
+// ✅ Copy Key ke Clipboard
+document.getElementById("copy-key").addEventListener("click", function () {
+    const keyText = document.getElementById("user-key").textContent;
+    navigator.clipboard.writeText(keyText).then(() => {
+        alert("Kunci berhasil disalin!");
+    }).catch(err => console.error("Gagal menyalin key: ", err));
+});
+
+
+// ✅ Countdown waktu pembayaran
+function startCountdown() {
+    if (countdownInterval) clearInterval(countdownInterval);
+
+    const countdownElement = document.getElementById('countdown');
+    const expiresAt = new Date(transactionData.expires_at).getTime();
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const timeLeft = expiresAt - now;
+
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            countdownElement.textContent = "Kadaluarsa";
+            countdownElement.classList.add('text-red-600');
+            return;
+        }
+
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        countdownElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    updateCountdown();
+    countdownInterval = setInterval(updateCountdown, 1000);
+}
+
+// ✅ Copy jumlah pembayaran ke clipboard
+function copyAmount() {
+    if (!transactionData) return;
+
+    navigator.clipboard.writeText(transactionData.total_amount.toString())
+        .then(() => {
+            const copyAmountButton = document.getElementById('copy-amount');
+            copyAmountButton.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => copyAmountButton.innerHTML = '<i class="fas fa-copy"></i>', 1500);
+        })
+        .catch(err => console.error('Failed to copy: ', err));
+}
+
+// 🔹 Utility Functions 🔹
+function showLoading() {
+    document.getElementById('loading').classList.remove('hidden');
+}
+
+function hideLoading() {
+    document.getElementById('loading').classList.add('hidden');
+}
+
+function showError(message) {
+    document.getElementById('error-message').textContent = message;
+    document.getElementById('error-container').classList.remove('hidden');
+}
+
+function hideError() {
+    document.getElementById('error-container').classList.add('hidden');
+}
+
+function showPaymentContainer() {
+    document.getElementById('payment-container').classList.remove('hidden');
+}
+
+function hidePaymentContainer() {
+    document.getElementById('payment-container').classList.add('hidden');
+}
+
+function showSuccessContainer() {
+    document.getElementById('success-container').classList.remove('hidden');
+}
+
+function hideSuccessContainer() {
+    document.getElementById('success-container').classList.add('hidden');
+}
+
+function formatCurrency(amount) {
+    return 'Rp ' + new Intl.NumberFormat('id-ID').format(amount);
+}
+
+function setButtonLoading(loading) {
+    const button = document.getElementById("check-payment");
+    if (loading) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i> Memeriksa...';
+    } else {
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-sync-alt mr-2"></i> Cek Status Pembayaran';
+    }
+}
+
+    </script>
+</body>
+</html>

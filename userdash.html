@@ -11,20 +11,17 @@
     <div class="container mx-auto px-4 py-8 max-w-md">
         <!-- Login Page -->
         <div id="loginPage" class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
-            <h1 class="text-2xl font-bold text-blue-800 mb-6 text-center">Shader System Login</h1>
-            
+            <h1 class="text-2xl font-bold text-blue-800 mb-6 text-center">Wallhack System</h1>
             <div class="mb-4">
                 <label for="userKeyLogin" class="block text-sm font-medium text-blue-700 mb-1">User Key:</label>
                 <input type="text" id="userKeyLogin" placeholder="Enter your user key" 
                     class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
-            
             <div class="mb-6">
                 <label for="transactionId" class="block text-sm font-medium text-blue-700 mb-1">Transaction ID:</label>
                 <input type="text" id="transactionId" placeholder="Enter your transaction ID" 
                     class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
-            
             <button id="loginButton" 
                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -33,7 +30,6 @@
                 Login
             </button>
         </div>
-
         <!-- User Settings Page (initially hidden) -->
         <div id="settingsPage" class="hidden">
             <div class="flex justify-between items-center mb-4">
@@ -44,27 +40,23 @@
                     </svg>
                 </button>
             </div>
-
             <div class="grid grid-cols-1 gap-6">
                 <!-- User Info Card -->
                 <div class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
                     <h2 class="text-xl font-semibold text-blue-700 mb-3">Account Information</h2>
-                    <p class="text-gray-700"><span class="font-medium">User Key:</span> <span id="userKeyDisplay"></span></p>
-                    <p class="text-gray-700"><span class="font-medium">Registrator:</span> <span id="registratorDisplay"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Key :</span> <span id="userKeyDisplay"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">trx_id :</span> <span id="registratorDisplay"></span></p>
                     <p class="text-gray-700"><span class="font-medium">Connected Devices:</span> <span id="deviceCountDisplay"></span></p>
                 </div>
-                
                 <!-- Shader Color Settings Card -->
                 <div class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
                     <h2 class="text-xl font-semibold text-blue-700 mb-4">Shader Color Settings</h2>
-                    
                     <div class="mb-4">
                         <label for="colorPicker" class="block text-sm font-medium text-blue-700 mb-1">Choose a color:</label>
                         <input type="color" id="colorPicker" value="#ffff00" 
                             class="h-12 w-24 border border-blue-300 rounded-md cursor-pointer">
                         <div id="colorPreview" class="mt-2 h-8 w-full rounded-md border border-blue-300"></div>
                     </div>
-                    
                     <div class="mb-6">
                         <label for="alpha" class="block text-sm font-medium text-blue-700 mb-1">
                             Alpha (Transparency): <span id="alphaValue">0.8</span>
@@ -72,7 +64,6 @@
                         <input type="range" id="alpha" min="0" max="1" step="0.01" value="0.8"
                             class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer">
                     </div>
-                    
                     <button id="saveColorButton" 
                         class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -81,12 +72,10 @@
                         Save Color Settings
                     </button>
                 </div>
-                
                 <!-- Device Reset Card -->
                 <div class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
                     <h2 class="text-xl font-semibold text-blue-700 mb-4">Device Management</h2>
-                    <p class="text-gray-600 mb-4">Reset all connected devices. This action cannot be undone.</p>
-                    
+                    <p class="text-gray-600 mb-4">Reset all connected devices.</p>
                     <button id="resetDevicesButton" 
                         class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -98,42 +87,34 @@
             </div>
         </div>
     </div>
-
     <script>
-        // API endpoints
-        const API_BASE_URL = 'https://smkn1-lsm.sch.id/esdate/public';
-        const API_ENDPOINTS = {
-            login: `${API_BASE_URL}/connect`,
-            updateColor: `${API_BASE_URL}/connect`,
-            resetDevices: `${API_BASE_URL}/connect`  // We'll use the same endpoint with different parameters
-        };
-        
-        // Session management
+        const API_BASE_URL = 'https://xnorealszzid.my.id/api';
         let userSession = null;
-        
+
         // Check if user is already logged in
         function checkSession() {
             const savedSession = localStorage.getItem('shaderSession');
             if (savedSession) {
                 userSession = JSON.parse(savedSession);
                 showSettingsPage();
-                updateUserInfo();
+                updateUserInfo(); // Pastikan ini dipanggil saat halaman dimuat
+            } else {
+                showLoginPage();
             }
         }
-        
+
+        // Show settings page and initialize UI
+        function showSettingsPage() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('settingsPage').classList.remove('hidden');
+            updateColorPreview(); // Pastikan preview warna diinisialisasi
+        }
+
         // Login functionality
-        const loginButton = document.getElementById('loginButton');
-        loginButton.addEventListener('click', () => {
+        document.getElementById('loginButton').addEventListener('click', () => {
             const userKey = document.getElementById('userKeyLogin').value;
             const transactionId = document.getElementById('transactionId').value;
-            
-            if (!userKey || !transactionId) {
-                showNotification('Please enter both User Key and Transaction ID', 'error');
-                return;
-            }
-            
-            // Using the Connect endpoint with trxid parameter
-            axios.post(API_ENDPOINTS.login, {
+            axios.post(`${API_BASE_URL}/login`, {
                 user_key: userKey,
                 trxid: transactionId
             }).then(response => {
@@ -151,23 +132,21 @@
                 showNotification('Login failed. Please try again.', 'error');
             });
         });
-        
+
         // Logout functionality
-        const logoutButton = document.getElementById('logoutButton');
-        logoutButton.addEventListener('click', () => {
+        document.getElementById('logoutButton').addEventListener('click', () => {
             localStorage.removeItem('shaderSession');
             userSession = null;
             showLoginPage();
             showNotification('Logged out successfully', 'success');
         });
-        
+
         // Color picker functionality
         const colorPicker = document.getElementById('colorPicker');
         const colorPreview = document.getElementById('colorPreview');
         const alpha = document.getElementById('alpha');
         const alphaValue = document.getElementById('alphaValue');
-        
-        // Update color preview
+
         function updateColorPreview() {
             const color = colorPicker.value;
             const transparency = alpha.value;
@@ -175,27 +154,21 @@
             colorPreview.style.opacity = transparency;
             alphaValue.textContent = transparency;
         }
-        
-        // Event listeners for color updates
+
         colorPicker.addEventListener('input', updateColorPreview);
         alpha.addEventListener('input', updateColorPreview);
-        
+
         // Save color settings
-        const saveColorButton = document.getElementById('saveColorButton');
-        saveColorButton.addEventListener('click', () => {
+        document.getElementById('saveColorButton').addEventListener('click', () => {
             if (!userSession) {
                 showNotification('You must be logged in', 'error');
                 return;
             }
-            
             const color = colorPicker.value;
             const transparency = alpha.value;
-            
-            // Convert hex color to RGBA for shader
             const rgb = hexToRgb(color);
             const shaderColor = `vec4(${rgb.r / 255}, ${rgb.g / 255}, ${rgb.b / 255}, ${transparency})`;
-            
-            axios.post(API_ENDPOINTS.updateColor, {
+            axios.post(`${API_BASE_URL}/update-color`, {
                 user_key: userSession.user_key,
                 shader_color: shaderColor
             }).then(response => {
@@ -211,23 +184,18 @@
                 showNotification('Failed to save shader color.', 'error');
             });
         });
-        
+
         // Reset devices functionality
-        const resetDevicesButton = document.getElementById('resetDevicesButton');
-        resetDevicesButton.addEventListener('click', () => {
+        document.getElementById('resetDevicesButton').addEventListener('click', () => {
             if (!userSession) {
                 showNotification('You must be logged in', 'error');
                 return;
             }
-            
             if (confirm('Are you sure you want to reset all devices? This action cannot be undone.')) {
-                // Using the Connect endpoint with a reset_devices parameter
-                axios.post(API_ENDPOINTS.resetDevices, {
-                    user_key: userSession.user_key,
-                    reset_devices: true  // Special parameter to indicate device reset
+                axios.post(`${API_BASE_URL}/reset-devices`, {
+                    user_key: userSession.user_key
                 }).then(response => {
                     if (response.data.status) {
-                        // Update the session with empty devices
                         userSession.devices = "";
                         localStorage.setItem('shaderSession', JSON.stringify(userSession));
                         updateUserInfo();
@@ -241,45 +209,46 @@
                 });
             }
         });
-        
+
         // UI helpers
         function showLoginPage() {
             document.getElementById('loginPage').classList.remove('hidden');
             document.getElementById('settingsPage').classList.add('hidden');
         }
-        
+
         function showSettingsPage() {
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('settingsPage').classList.remove('hidden');
-            // Initialize color preview
             updateColorPreview();
         }
-        
+
         function updateUserInfo() {
             document.getElementById('userKeyDisplay').textContent = userSession.user_key;
             document.getElementById('registratorDisplay').textContent = userSession.registrator || 'N/A';
-            
             // Count devices
             const deviceCount = userSession.devices ? userSession.devices.split(',').length : 0;
             document.getElementById('deviceCountDisplay').textContent = deviceCount;
-            
+
             // Set color if available
             if (userSession.shader_color) {
                 try {
-                    // Try to parse shader color back to hex
-                    const colorRegex = /vec4\(([\d.]+),\s*([\d.]+),\s*([\d.]+),\s*([\d.]+)\)/;
+                    // Parse shader color from vec4 format
+                    const colorRegex = /vec4(([d.]+),s*([d.]+),s*([d.]+),s*([d.]+))/;
                     const match = userSession.shader_color.match(colorRegex);
-                    
                     if (match) {
-                        const r = Math.round(parseFloat(match[1]) * 255);
+                        const r = Math.round(parseFloat(match[1]) * 255); // Convert to RGB
                         const g = Math.round(parseFloat(match[2]) * 255);
                         const b = Math.round(parseFloat(match[3]) * 255);
-                        const a = parseFloat(match[4]);
-                        
+                        const a = parseFloat(match[4]); // Alpha value
+
+                        // Convert RGB to hex
                         const hexColor = rgbToHex(r, g, b);
+
+                        // Set color picker and alpha values
                         colorPicker.value = hexColor;
                         alpha.value = a;
-                        
+
+                        // Update the color preview
                         updateColorPreview();
                     }
                 } catch (e) {
@@ -287,7 +256,7 @@
                 }
             }
         }
-        
+
         // Helper functions
         function hexToRgb(hex) {
             const bigint = parseInt(hex.slice(1), 16);
@@ -296,11 +265,11 @@
             const b = bigint & 255;
             return { r, g, b };
         }
-        
+
         function rgbToHex(r, g, b) {
             return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
         }
-        
+
         function showNotification(message, type) {
             const notification = document.createElement('div');
             notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-md shadow-lg ${
@@ -308,13 +277,11 @@
             } text-white max-w-xs z-50`;
             notification.textContent = message;
             document.body.appendChild(notification);
-            
-            // Remove notification after 3 seconds
             setTimeout(() => {
                 notification.remove();
             }, 3000);
         }
-        
+
         // Check session on load
         checkSession();
     </script>
