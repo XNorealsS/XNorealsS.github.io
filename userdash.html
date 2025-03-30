@@ -3,90 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shader System</title>
+    <title>Wallhack System</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-blue-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-md">
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+    <div class="container mx-auto max-w-md">
         <!-- Login Page -->
-        <div id="loginPage" class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
-            <h1 class="text-2xl font-bold text-blue-800 mb-6 text-center">Wallhack System</h1>
-            <div class="mb-4">
-                <label for="userKeyLogin" class="block text-sm font-medium text-blue-700 mb-1">User Key:</label>
-                <input type="text" id="userKeyLogin" placeholder="Enter your user key" 
-                    class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <div id="loginPage" class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 py-6 px-6 text-center">
+                <h1 class="text-2xl font-bold text-white">Wallhack System</h1>
+                <p class="text-blue-100 text-sm mt-1">Login to access your settings</p>
             </div>
-            <div class="mb-6">
-                <label for="transactionId" class="block text-sm font-medium text-blue-700 mb-1">Transaction ID:</label>
-                <input type="text" id="transactionId" placeholder="Enter your transaction ID" 
-                    class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            <button id="loginButton" 
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
-                </svg>
-                Login
-            </button>
-        </div>
-        <!-- User Settings Page (initially hidden) -->
-        <div id="settingsPage" class="hidden">
-            <div class="flex justify-between items-center mb-4">
-                <h1 class="text-2xl font-bold text-blue-800">User Settings</h1>
-                <button id="logoutButton" class="text-blue-600 hover:text-blue-800">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
+            <div class="p-6">
+                <div class="mb-5">
+                    <label for="userKeyLogin" class="block text-sm font-medium text-gray-700 mb-1">User Key</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                            <i class="fas fa-key"></i>
+                        </span>
+                        <input type="text" id="userKeyLogin" placeholder="Enter your user key" 
+                            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label for="transactionId" class="block text-sm font-medium text-gray-700 mb-1">Transaction ID</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                            <i class="fas fa-receipt"></i>
+                        </span>
+                        <input type="text" id="transactionId" placeholder="Enter your transaction ID" 
+                            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    </div>
+                </div>
+                <button id="loginButton" 
+                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300 ease-in-out flex items-center justify-center shadow-md">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    Login
                 </button>
             </div>
-            <div class="grid grid-cols-1 gap-6">
-                <!-- User Info Card -->
-                <div class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
-                    <h2 class="text-xl font-semibold text-blue-700 mb-3">Account Information</h2>
-                    <p class="text-gray-700"><span class="font-medium">Key :</span> <span id="userKeyDisplay"></span></p>
-                    <p class="text-gray-700"><span class="font-medium">trx_id :</span> <span id="registratorDisplay"></span></p>
-                    <p class="text-gray-700"><span class="font-medium">Connected Devices:</span> <span id="deviceCountDisplay"></span></p>
-                </div>
-                <!-- Shader Color Settings Card -->
-                <div class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
-                    <h2 class="text-xl font-semibold text-blue-700 mb-4">Shader Color Settings</h2>
-                    <div class="mb-4">
-                        <label for="colorPicker" class="block text-sm font-medium text-blue-700 mb-1">Choose a color:</label>
-                        <input type="color" id="colorPicker" value="#ffff00" 
-                            class="h-12 w-24 border border-blue-300 rounded-md cursor-pointer">
-                        <div id="colorPreview" class="mt-2 h-8 w-full rounded-md border border-blue-300"></div>
+        </div>
+        
+        <!-- User Settings Page (initially hidden) -->
+        <div id="settingsPage" class="hidden">
+            <!-- Top Navigation Bar -->
+            <div class="bg-white rounded-xl shadow-lg mb-4 flex items-center justify-between p-4">
+                <div class="flex items-center">
+                    <div class="bg-blue-600 text-white p-2 rounded-lg mr-3">
+                        <i class="fas fa-shield-alt"></i>
                     </div>
-                    <div class="mb-6">
-                        <label for="alpha" class="block text-sm font-medium text-blue-700 mb-1">
-                            Alpha (Transparency): <span id="alphaValue">0.8</span>
-                        </label>
-                        <input type="range" id="alpha" min="0" max="1" step="0.01" value="0.8"
-                            class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer">
+                    <div>
+                        <h1 class="text-lg font-bold text-gray-800">Wallhack System</h1>
+                        <p class="text-xs text-gray-500" id="userKeyDisplay"></p>
                     </div>
-                    <button id="saveColorButton" 
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                        Save Color Settings
-                    </button>
                 </div>
-                <!-- Device Reset Card -->
-                <div class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
-                    <h2 class="text-xl font-semibold text-blue-700 mb-4">Device Management</h2>
-                    <p class="text-gray-600 mb-4">Reset all connected devices.</p>
-                    <button id="resetDevicesButton" 
-                        class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md transition duration-300 ease-in-out flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-                        </svg>
-                        Reset All Devices
-                    </button>
+                <button id="logoutButton" class="text-gray-500 hover:text-red-500 transition p-2">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+            
+            <!-- Account Info Card -->
+            <div class="bg-white rounded-xl shadow-lg p-5 mb-4">
+                <div class="flex items-center mb-4">
+                    <div class="bg-blue-100 text-blue-600 p-2 rounded-lg mr-3">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-800">Account Details</h2>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-gray-500 mb-1">Transaction ID</p>
+                        <p class="font-medium text-gray-800" id="registratorDisplay">-</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-gray-500 mb-1">Connected Devices</p>
+                        <p class="font-medium text-gray-800" id="deviceCountDisplay">0</p>
+                    </div>
                 </div>
             </div>
+            
+            <!-- Color Settings Card -->
+            <div class="bg-white rounded-xl shadow-lg p-5 mb-4">
+                <div class="flex items-center mb-4">
+                    <div class="bg-blue-100 text-blue-600 p-2 rounded-lg mr-3">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-800">Shader Color</h2>
+                </div>
+                
+                <!-- Color Picker -->
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Choose a color</label>
+                    
+                    <!-- Color Presets -->
+                    <div class="grid grid-cols-6 gap-2 mb-3">
+                        <button class="color-preset h-10 rounded-lg border border-gray-200" style="background-color: #FF0000;" data-color="#FF0000"></button>
+                        <button class="color-preset h-10 rounded-lg border border-gray-200" style="background-color: #00FF00;" data-color="#00FF00"></button>
+                        <button class="color-preset h-10 rounded-lg border border-gray-200" style="background-color: #0000FF;" data-color="#0000FF"></button>
+                        <button class="color-preset h-10 rounded-lg border border-gray-200" style="background-color: #FFFF00;" data-color="#FFFF00"></button>
+                        <button class="color-preset h-10 rounded-lg border border-gray-200" style="background-color: #FF00FF;" data-color="#FF00FF"></button>
+                        <button class="color-preset h-10 rounded-lg border border-gray-200" style="background-color: #00FFFF;" data-color="#00FFFF"></button>
+                    </div>
+                    
+                    <!-- Advanced Color Options -->
+                    <div class="mb-3">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm text-gray-500 mb-2">Tidak suka warna di atas? Pilih warna custom:</p>
+                        </div>
+                        
+                        <!-- Custom Color Picker -->
+                        <div class="flex flex-col space-y-3">
+                            <!-- RGB Sliders -->
+                            <div>
+                                <div class="flex items-center mb-1">
+                                    <span class="w-8 h-6 bg-red-500 mr-2 rounded"></span>
+                                    <label for="redSlider" class="text-sm font-medium text-gray-700">Red: <span id="redValue">255</span></label>
+                                </div>
+                                <input type="range" id="redSlider" min="0" max="255" value="255" class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            
+                            <div>
+                                <div class="flex items-center mb-1">
+                                    <span class="w-8 h-6 bg-green-500 mr-2 rounded"></span>
+                                    <label for="greenSlider" class="text-sm font-medium text-gray-700">Green: <span id="greenValue">255</span></label>
+                                </div>
+                                <input type="range" id="greenSlider" min="0" max="255" value="255" class="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            
+                            <div>
+                                <div class="flex items-center mb-1">
+                                    <span class="w-8 h-6 bg-blue-500 mr-2 rounded"></span>
+                                    <label for="blueSlider" class="text-sm font-medium text-gray-700">Blue: <span id="blueValue">0</span></label>
+                                </div>
+                                <input type="range" id="blueSlider" min="0" max="255" value="0" class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            
+                            <!-- Hex Color Input -->
+                            <div class="mt-2">
+                                <label for="hexInput" class="block text-sm font-medium text-gray-700 mb-1">Hex Color:</label>
+                                <div class="flex">
+                                    <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                                        #
+                                    </span>
+                                    <input type="text" id="hexInput" value="FFFF00" maxlength="6" placeholder="FFFF00" 
+                                           class="flex-1 px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preview -->
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Preview:</span>
+                        <div class="flex items-center">
+                            <input type="color" id="colorPicker" value="#ffff00" 
+                                class="h-10 w-10 border-0 rounded cursor-pointer mr-2 bg-transparent">
+                            <div id="colorPreview" class="h-10 w-10 rounded-lg border border-gray-300 shadow-inner"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alpha Slider -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="alpha" class="block text-sm font-medium text-gray-700">
+                            Transparency
+                        </label>
+                        <span id="alphaValue" class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium">80%</span>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                            <i class="fas fa-low-vision"></i>
+                        </div>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <input type="range" id="alpha" min="0" max="1" step="0.01" value="0.8"
+                            class="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer px-10">
+                    </div>
+                </div>
+                
+                <button id="saveColorButton" 
+                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300 ease-in-out flex items-center justify-center shadow-md">
+                    <i class="fas fa-save mr-2"></i>
+                    Save Color Settings
+                </button>
+            </div>
+            
+            <!-- Device Management Card -->
+            <div class="bg-white rounded-xl shadow-lg p-5">
+                <div class="flex items-center mb-4">
+                    <div class="bg-red-100 text-red-600 p-2 rounded-lg mr-3">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-800">Device Management</h2>
+                </div>
+                <p class="text-gray-600 mb-4 text-sm">Reset all your connected devices. This action cannot be undone.</p>
+                <button id="resetDevicesButton" 
+                    class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium py-3 px-4 rounded-lg transition duration-300 ease-in-out flex items-center justify-center shadow-md">
+                    <i class="fas fa-redo-alt mr-2"></i>
+                    Reset All Devices
+                </button>
+            </div>
         </div>
+        
+        <!-- Notification Container -->
+        <div id="notificationContainer" class="fixed bottom-4 right-4 z-50"></div>
     </div>
+    
     <script>
         const API_BASE_URL = 'https://xnorealszzid.my.id/api';
         let userSession = null;
@@ -97,23 +222,28 @@
             if (savedSession) {
                 userSession = JSON.parse(savedSession);
                 showSettingsPage();
-                updateUserInfo(); // Pastikan ini dipanggil saat halaman dimuat
+                updateUserInfo();
             } else {
                 showLoginPage();
             }
-        }
-
-        // Show settings page and initialize UI
-        function showSettingsPage() {
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('settingsPage').classList.remove('hidden');
-            updateColorPreview(); // Pastikan preview warna diinisialisasi
         }
 
         // Login functionality
         document.getElementById('loginButton').addEventListener('click', () => {
             const userKey = document.getElementById('userKeyLogin').value;
             const transactionId = document.getElementById('transactionId').value;
+            
+            if (!userKey || !transactionId) {
+                showNotification('Please enter both user key and transaction ID', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const loginButton = document.getElementById('loginButton');
+            const originalContent = loginButton.innerHTML;
+            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Logging in...';
+            loginButton.disabled = true;
+            
             axios.post(`${API_BASE_URL}/login`, {
                 user_key: userKey,
                 trxid: transactionId
@@ -127,9 +257,15 @@
                 } else {
                     showNotification(response.data.reason || 'Invalid credentials', 'error');
                 }
+                // Reset button
+                loginButton.innerHTML = originalContent;
+                loginButton.disabled = false;
             }).catch(error => {
                 console.error(error);
-                showNotification('Login failed. Please try again.', 'error');
+                showNotification('Login failed. Please check your connection.', 'error');
+                // Reset button
+                loginButton.innerHTML = originalContent;
+                loginButton.disabled = false;
             });
         });
 
@@ -146,17 +282,93 @@
         const colorPreview = document.getElementById('colorPreview');
         const alpha = document.getElementById('alpha');
         const alphaValue = document.getElementById('alphaValue');
+        
+        // RGB sliders
+        const redSlider = document.getElementById('redSlider');
+        const greenSlider = document.getElementById('greenSlider');
+        const blueSlider = document.getElementById('blueSlider');
+        const redValue = document.getElementById('redValue');
+        const greenValue = document.getElementById('greenValue');
+        const blueValue = document.getElementById('blueValue');
+        const hexInput = document.getElementById('hexInput');
 
+        // Initialize with yellow
+        redSlider.value = 255;
+        greenSlider.value = 255;
+        blueSlider.value = 0;
+        updateRgbValues();
+        
         function updateColorPreview() {
             const color = colorPicker.value;
             const transparency = alpha.value;
             colorPreview.style.backgroundColor = color;
             colorPreview.style.opacity = transparency;
-            alphaValue.textContent = transparency;
+            alphaValue.textContent = Math.round(transparency * 100) + '%';
+            
+            // Update RGB sliders without triggering their change events
+            const rgb = hexToRgb(color);
+            redSlider.value = rgb.r;
+            greenSlider.value = rgb.g;
+            blueSlider.value = rgb.b;
+            updateRgbValues(false);
         }
+        
+        function updateRgbValues(updatePicker = true) {
+            // Update RGB display values
+            redValue.textContent = redSlider.value;
+            greenValue.textContent = greenSlider.value;
+            blueValue.textContent = blueSlider.value;
+            
+            // Convert RGB to hex and update hex input
+            const r = parseInt(redSlider.value);
+            const g = parseInt(greenSlider.value);
+            const b = parseInt(blueSlider.value);
+            const hexColor = rgbToHex(r, g, b);
+            
+            hexInput.value = hexColor.slice(1); // Remove # symbol
+            
+            if (updatePicker) {
+                colorPicker.value = hexColor;
+                colorPreview.style.backgroundColor = hexColor;
+            }
+        }
+        
+        // Event listeners for RGB sliders
+        redSlider.addEventListener('input', () => updateRgbValues());
+        greenSlider.addEventListener('input', () => updateRgbValues());
+        blueSlider.addEventListener('input', () => updateRgbValues());
+        
+        // Event listener for hex input
+        hexInput.addEventListener('input', function() {
+            // Ensure hex input has correct format
+            this.value = this.value.replace(/[^0-9A-Fa-f]/g, '').toUpperCase();
+            
+            if (this.value.length === 6) {
+                const hexColor = '#' + this.value;
+                colorPicker.value = hexColor;
+                
+                // Update RGB sliders
+                const rgb = hexToRgb(hexColor);
+                redSlider.value = rgb.r;
+                greenSlider.value = rgb.g;
+                blueSlider.value = rgb.b;
+                
+                updateRgbValues(false);
+                colorPreview.style.backgroundColor = hexColor;
+            }
+        });
 
         colorPicker.addEventListener('input', updateColorPreview);
         alpha.addEventListener('input', updateColorPreview);
+        
+        // Color presets
+        document.querySelectorAll('.color-preset').forEach(preset => {
+            preset.addEventListener('click', () => {
+                const color = preset.getAttribute('data-color');
+                colorPicker.value = color;
+                updateColorPreview();
+            });
+        });
 
         // Save color settings
         document.getElementById('saveColorButton').addEventListener('click', () => {
@@ -164,10 +376,18 @@
                 showNotification('You must be logged in', 'error');
                 return;
             }
+            
+            // Show loading state
+            const saveButton = document.getElementById('saveColorButton');
+            const originalContent = saveButton.innerHTML;
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
+            saveButton.disabled = true;
+            
             const color = colorPicker.value;
             const transparency = alpha.value;
             const rgb = hexToRgb(color);
             const shaderColor = `vec4(${rgb.r / 255}, ${rgb.g / 255}, ${rgb.b / 255}, ${transparency})`;
+            
             axios.post(`${API_BASE_URL}/update-color`, {
                 user_key: userSession.user_key,
                 shader_color: shaderColor
@@ -179,9 +399,15 @@
                 } else {
                     showNotification(response.data.reason || 'Failed to save shader color', 'error');
                 }
+                // Reset button
+                saveButton.innerHTML = originalContent;
+                saveButton.disabled = false;
             }).catch(error => {
                 console.error(error);
                 showNotification('Failed to save shader color.', 'error');
+                // Reset button
+                saveButton.innerHTML = originalContent;
+                saveButton.disabled = false;
             });
         });
 
@@ -191,10 +417,42 @@
                 showNotification('You must be logged in', 'error');
                 return;
             }
-            if (confirm('Are you sure you want to reset all devices? This action cannot be undone.')) {
+            
+            // Create a modal for confirmation
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-xs w-full mx-4 shadow-2xl">
+                    <div class="text-center mb-4">
+                        <div class="bg-red-100 text-red-600 rounded-full p-3 inline-block mb-2">
+                            <i class="fas fa-exclamation-triangle text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Reset All Devices?</h3>
+                        <p class="text-gray-600 text-sm mt-1">This action cannot be undone.</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="cancelReset" class="flex-1 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition">Cancel</button>
+                        <button id="confirmReset" class="flex-1 py-2 bg-red-600 rounded-lg font-medium text-white hover:bg-red-700 transition">Reset</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Add event listeners to modal buttons
+            document.getElementById('cancelReset').addEventListener('click', () => {
+                modal.remove();
+            });
+            
+            document.getElementById('confirmReset').addEventListener('click', () => {
+                // Show loading state
+                const confirmButton = document.getElementById('confirmReset');
+                confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resetting...';
+                confirmButton.disabled = true;
+                
                 axios.post(`${API_BASE_URL}/reset-devices`, {
                     user_key: userSession.user_key
                 }).then(response => {
+                    modal.remove();
                     if (response.data.status) {
                         userSession.devices = "";
                         localStorage.setItem('shaderSession', JSON.stringify(userSession));
@@ -204,10 +462,11 @@
                         showNotification(response.data.reason || 'Failed to reset devices', 'error');
                     }
                 }).catch(error => {
+                    modal.remove();
                     console.error(error);
                     showNotification('Failed to reset devices.', 'error');
                 });
-            }
+            });
         });
 
         // UI helpers
@@ -225,6 +484,7 @@
         function updateUserInfo() {
             document.getElementById('userKeyDisplay').textContent = userSession.user_key;
             document.getElementById('registratorDisplay').textContent = userSession.registrator || 'N/A';
+            
             // Count devices
             const deviceCount = userSession.devices ? userSession.devices.split(',').length : 0;
             document.getElementById('deviceCountDisplay').textContent = deviceCount;
@@ -233,13 +493,13 @@
             if (userSession.shader_color) {
                 try {
                     // Parse shader color from vec4 format
-                    const colorRegex = /vec4(([d.]+),s*([d.]+),s*([d.]+),s*([d.]+))/;
+                    const colorRegex = /vec4\(([0-9.]+),\s*([0-9.]+),\s*([0-9.]+),\s*([0-9.]+)\)/;
                     const match = userSession.shader_color.match(colorRegex);
                     if (match) {
-                        const r = Math.round(parseFloat(match[1]) * 255); // Convert to RGB
+                        const r = Math.round(parseFloat(match[1]) * 255);
                         const g = Math.round(parseFloat(match[2]) * 255);
                         const b = Math.round(parseFloat(match[3]) * 255);
-                        const a = parseFloat(match[4]); // Alpha value
+                        const a = parseFloat(match[4]);
 
                         // Convert RGB to hex
                         const hexColor = rgbToHex(r, g, b);
@@ -247,6 +507,17 @@
                         // Set color picker and alpha values
                         colorPicker.value = hexColor;
                         alpha.value = a;
+                        
+                        // Update RGB sliders
+                        redSlider.value = r;
+                        greenSlider.value = g;
+                        blueSlider.value = b;
+                        hexInput.value = hexColor.slice(1);
+                        
+                        // Update display values
+                        redValue.textContent = r;
+                        greenValue.textContent = g;
+                        blueValue.textContent = b;
 
                         // Update the color preview
                         updateColorPreview();
@@ -259,26 +530,60 @@
 
         // Helper functions
         function hexToRgb(hex) {
-            const bigint = parseInt(hex.slice(1), 16);
-            const r = (bigint >> 16) & 255;
-            const g = (bigint >> 8) & 255;
-            const b = bigint & 255;
-            return { r, g, b };
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 0, b: 0 };
         }
 
         function rgbToHex(r, g, b) {
-            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
         }
 
         function showNotification(message, type) {
+            const container = document.getElementById('notificationContainer');
             const notification = document.createElement('div');
-            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-md shadow-lg ${
+            notification.className = `flex items-center mb-3 px-4 py-3 rounded-lg shadow-lg ${
                 type === 'success' ? 'bg-green-500' : 'bg-red-500'
-            } text-white max-w-xs z-50`;
-            notification.textContent = message;
-            document.body.appendChild(notification);
+            } text-white max-w-xs animate-fade-in`;
+            
+            const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            notification.innerHTML = `
+                <i class="${icon} mr-3"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Add animation style
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; transform: translateY(0); }
+                    to { opacity: 0; transform: translateY(-20px); }
+                }
+                .animate-fade-in {
+                    animation: fadeIn 0.3s ease-out forwards;
+                }
+                .animate-fade-out {
+                    animation: fadeOut 0.3s ease-in forwards;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Remove notification after delay
             setTimeout(() => {
-                notification.remove();
+                notification.classList.remove('animate-fade-in');
+                notification.classList.add('animate-fade-out');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
             }, 3000);
         }
 
