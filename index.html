@@ -130,64 +130,92 @@
           }
   
           document.addEventListener(`DOMContentLoaded`, () => {
-              const sliderThumb = document.getElementById(`sliderThumb`);
-              const sliderTrack = document.getElementById(`sliderTrack`);
-              const slider = sliderThumb.parentElement;
-              const confirmButton = document.getElementById(`confirmButton`);
-              const cancelButton = document.getElementById(`cancelButton`);
-              const modal = document.getElementById(`confirmationModal`);
-              
-              sliderTrack.addEventListener(`touchstart`, (e) => {
-                  e.preventDefault();
-                  const touch = e.touches[0];
-                  const thumbRect = sliderThumb.getBoundingClientRect();
-                  const sliderRect = slider.getBoundingClientRect();
-                  const startX = touch.clientX - sliderRect.left;
-                  
-                  const moveHandler = (moveEvent) => {
-                      moveEvent.preventDefault();
-                      const currentTouch = moveEvent.touches[0];
-                      let newLeft = currentTouch.clientX - sliderRect.left - thumbRect.width / 2;
-                      
-                      newLeft = Math.max(0, Math.min(newLeft, sliderRect.width - thumbRect.width));
-                      sliderThumb.style.left = `${newLeft}px`;
-                      
-                      if (newLeft >= sliderRect.width - thumbRect.width - 5) {
-                          isSliderComplete = true;
-                          confirmButton.disabled = false;
-                          sliderThumb.innerHTML = `✓`;
-                      } else {
-                          isSliderComplete = false;
-                          confirmButton.disabled = true;
-                          sliderThumb.innerHTML = `→`;
-                      }
-                  };
-                  
-                  const endHandler = () => {
-                      if (!isSliderComplete) {
-                          sliderThumb.style.left = `0px`;
-                      }
-                      document.removeEventListener(`touchmove`, moveHandler);
-                      document.removeEventListener(`touchend`, endHandler);
-                  };
-                  
-                  document.addEventListener(`touchmove`, moveHandler);
-                  document.addEventListener(`touchend`, endHandler);
-              });
-              
-              confirmButton.addEventListener(`click`, () => {
-                  if (isSliderComplete && selectedProductId) {
-                      modal.classList.add(`hidden`);
-                      generateInvoice(selectedProductId);
-                  }
-              });
-              
-              cancelButton.addEventListener(`click`, () => {
-                  modal.classList.add(`hidden`);
-              });
-          });
-  
-          loadProducts();
+    const sliderThumb = document.getElementById(`sliderThumb`);
+    const sliderTrack = document.getElementById(`sliderTrack`);
+    const slider = sliderThumb.parentElement;
+    const confirmButton = document.getElementById(`confirmButton`);
+    const cancelButton = document.getElementById(`cancelButton`);
+    const modal = document.getElementById(`confirmationModal`);
+
+    // Fungsi umum untuk mengatur posisi slider
+    function handleSliderMove(clientX) {
+        const sliderRect = slider.getBoundingClientRect();
+        const thumbRect = sliderThumb.getBoundingClientRect();
+        let newLeft = clientX - sliderRect.left - thumbRect.width / 2;
+
+        newLeft = Math.max(0, Math.min(newLeft, sliderRect.width - thumbRect.width));
+        sliderThumb.style.left = `${newLeft}px`;
+
+        if (newLeft >= sliderRect.width - thumbRect.width - 5) {
+            isSliderComplete = true;
+            confirmButton.disabled = false;
+            sliderThumb.innerHTML = `✓`;
+        } else {
+            isSliderComplete = false;
+            confirmButton.disabled = true;
+            sliderThumb.innerHTML = `→`;
+        }
+    }
+
+    // Event listener untuk touch events
+    sliderTrack.addEventListener(`touchstart`, (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const startX = touch.clientX;
+
+        const moveHandler = (moveEvent) => {
+            moveEvent.preventDefault();
+            const currentTouch = moveEvent.touches[0];
+            handleSliderMove(currentTouch.clientX);
+        };
+
+        const endHandler = () => {
+            if (!isSliderComplete) {
+                sliderThumb.style.left = `0px`;
+            }
+            document.removeEventListener(`touchmove`, moveHandler);
+            document.removeEventListener(`touchend`, endHandler);
+        };
+
+        document.addEventListener(`touchmove`, moveHandler);
+        document.addEventListener(`touchend`, endHandler);
+    });
+
+    // Event listener untuk mouse events
+    sliderTrack.addEventListener(`mousedown`, (e) => {
+        e.preventDefault();
+        const startX = e.clientX;
+
+        const moveHandler = (moveEvent) => {
+            moveEvent.preventDefault();
+            handleSliderMove(moveEvent.clientX);
+        };
+
+        const upHandler = () => {
+            if (!isSliderComplete) {
+                sliderThumb.style.left = `0px`;
+            }
+            document.removeEventListener(`mousemove`, moveHandler);
+            document.removeEventListener(`mouseup`, upHandler);
+        };
+
+        document.addEventListener(`mousemove`, moveHandler);
+        document.addEventListener(`mouseup`, upHandler);
+    });
+
+    confirmButton.addEventListener(`click`, () => {
+        if (isSliderComplete && selectedProductId) {
+            modal.classList.add(`hidden`);
+            generateInvoice(selectedProductId);
+        }
+    });
+
+    cancelButton.addEventListener(`click`, () => {
+        modal.classList.add(`hidden`);
+    });
+});
+
+loadProducts();
       </script>
   </body>
   </html>
