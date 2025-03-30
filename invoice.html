@@ -227,6 +227,7 @@ async function loadInvoice() {
 
         if (result.success) {
             transactionData = result.data;
+            checkPaymentStatus();
             updateUIWithTransactionData();
             showPaymentContainer();
             startCountdown();
@@ -275,7 +276,7 @@ async function checkPaymentStatus() {
             document.getElementById('expired-date').textContent = result.data.expired_date ? `Masa Berlaku: ${result.data.expired_date}` : "Unlimited";
 
         } else {
-            alert("Pembayaran belum ditemukan. Silakan coba lagi.");
+            
         }
     } catch (error) {
         alert("Gagal mengecek pembayaran.");
