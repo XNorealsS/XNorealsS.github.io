@@ -1,221 +1,258 @@
 <!DOCTYPE html>
-  <html lang="id">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Pilih Produk</title>
-      <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body class="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen flex items-center justify-center p-4">
-      <div class="container mx-auto max-w-md">
-          <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-              <div class="bg-blue-600 text-white p-6">
-                  <h2 class="text-3xl font-bold text-center">XN GATEWAY</h2>
-              </div>
-              
-              <div class="p-6">
-                  <div id="product-list" class="space-y-4">
-                      <div class="flex justify-center items-center">
-                          <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                      </div>
-                  </div>
-                  </br>
-                  <h3>Sudah Punya Key <a class="text-blue-600" href="/resetkey">keys Setting</a></h3>
-                  </div>
-              </div>
-      
-          </div>
-  
-      <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-          <div class="bg-white rounded-2xl w-96 p-6 shadow-2xl">
-              <h3 class="text-2xl font-bold mb-4 text-blue-700">Konfirmasi Pembelian</h3>
-              <p id="confirmationText" class="text-gray-600 mb-6"></p>
-              
-              <div class="relative w-full h-12 bg-blue-100 rounded-full mb-4 touch-none">
-                  <div id="sliderThumb" class="absolute left-0 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white pointer-events-none">
-                      →
-                  </div>
-                  <div id="sliderTrack" class="absolute inset-0 z-10"></div>
-              </div>
-              <p class="text-sm text-center text-gray-500 mb-6">Geser tombol ke kanan untuk konfirmasi</p>
-              
-              <div class="flex space-x-4">
-                  <button id="cancelButton" class="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition">
-                      Batal
-                  </button>
-                  <button id="confirmButton" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition" disabled>
-                      Konfirmasi
-                  </button>
-              </div>
-          </div>
-      </div>
-  
-      <script>
-          const API_URL = 'https://xnorealszzid.my.id/api';
-          let selectedProductId = null;
-          let isSliderComplete = false;
-  
-          async function loadProducts() {
-              const productList = document.getElementById(`product-list`);
-  
-              try {
-                  const res = await fetch(`${API_URL}/products`);
-                  const data = await res.json();
-                  
-                  if (data.success) {
-                    productList.innerHTML = data.products.map(product => `
-                        <button onclick="showConfirmation(${product.id}, '${product.name}', ${product.price})"
-                            class="w-full bg-blue-50 text-blue-800 px-4 py-3 rounded-lg hover:bg-blue-100 transition flex justify-between items-center">
-                            <span class="font-semibold">${product.name}</span>
-                            <span class="text-blue-600 font-bold">Rp ${Number(product.price).toLocaleString('id-ID')}</span>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XN GATEWAY - Produk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen p-4">
+    <div class="container mx-auto max-w-5xl">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden mb-6">
+            <div class="bg-blue-600 text-white p-6">
+                <h2 class="text-3xl font-bold text-center">XN GATEWAY</h2>
+                <p class="text-center text-blue-100 mt-2">select item to purchase</p>
+            </div>
+        </div>
+
+        <!-- Product Cards -->
+        <div class="glass-effect rounded-lg p-6 mb-6 bg-white bg-opacity-90 shadow-lg" id="produk">
+            <h2 class="text-xl font-bold text-blue-900 mb-4">Produk & Harga</h2>
+            <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex justify-center items-center col-span-full py-8">
+                    <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keys Setting Link -->
+        <div class="text-center mb-6">
+            <h3 class="text-blue-800 mb-2">Sudah Punya Key?</h3>
+            <a href="/resetkey" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition inline-block">
+                <i class="fas fa-key mr-2"></i>Keys Setting
+            </a>
+            <!-- <a href="download.html" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition inline-block">
+                <i class="fas fa-download mr-2"></i>Download File
+            </a> -->
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-2xl w-96 p-6 shadow-2xl">
+            <h3 class="text-2xl font-bold mb-4 text-blue-700">Konfirmasi Pembelian</h3>
+            <p id="confirmationText" class="text-gray-600 mb-6"></p>
+            
+            <div class="relative w-full h-12 bg-blue-100 rounded-full mb-4 touch-none">
+                <div id="sliderThumb" class="absolute left-0 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white pointer-events-none">
+                    →
+                </div>
+                <div id="sliderTrack" class="absolute inset-0 z-10"></div>
+            </div>
+            <p class="text-sm text-center text-gray-500 mb-6">Geser tombol ke kanan untuk konfirmasi</p>
+            
+            <div class="flex space-x-4">
+                <button id="cancelButton" class="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition">
+                    Batal
+                </button>
+                <button id="confirmButton" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition" disabled>
+                    Konfirmasi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://xnorealszzid.my.id/api';
+        let selectedProductId = null;
+        let isSliderComplete = false;
+
+        // Function to create product card
+        function createProductCard(product) {
+            const bestDeal = product.id === 4 ? '<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">BEST DEAL</span>' : '';
+            
+            return `
+                <div class="bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+                    <div class="bg-blue-100 rounded-t-lg p-2 text-center">
+                        <h3 class="font-bold text-blue-800">${product.name}</h3>
+                        ${bestDeal}
+                    </div>
+                    <div class="p-4 text-center">
+                        <div class="text-2xl font-bold text-blue-600 mb-2">Rp ${Number(product.price).toLocaleString('id-ID')}</div>
+                        <ul class="text-sm text-blue-800 mb-4 text-left">
+                            <li class="mb-1 flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Akses Zygisk Module 3.7</li>
+                            <li class="mb-1 flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Support All Devices</li>
+                            <li class="mb-1 flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Auto Update</li>
+                            <li class="mb-1 flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> ${product.id >= 3 ? 'Premium ' : ''}Customer Support</li>
+                        </ul>
+                        <button onclick="showConfirmation(${product.id}, '${product.name}', ${product.price})" 
+                            class="bg-blue-600 text-white py-2 px-4 rounded-lg w-full hover:bg-blue-700 transition">
+                            BELI SEKARANG
                         </button>
-                    `).join('');
-                } else {
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load products from API
+        async function loadProducts() {
+            const productList = document.getElementById('product-list');
+
+            try {
+                const res = await fetch(`${API_URL}/products`);
+                const data = await res.json();
                 
-                      productList.innerHTML = `
-                          <div class="text-red-500 text-center bg-red-50 p-4 rounded-lg">
-                              Gagal memuat produk
-                          </div>
-                      `;
-                  }
-              } catch (error) {
-                  productList.innerHTML = `
-                      <div class="text-red-500 text-center bg-red-50 p-4 rounded-lg">
-                          Terjadi kesalahan
-                      </div>
-                  `;
-              }
-          }
-  
-          function showConfirmation(productId, productName, productPrice) {
-              selectedProductId = productId;
-              document.getElementById(`confirmationText`).innerHTML = 
-                  `Apakah Anda yakin ingin membeli <strong>${productName}</strong> dengan harga <strong>Rp ${productPrice.toLocaleString()}</strong>?`;
-              
-              const sliderThumb = document.getElementById(`sliderThumb`);
-              const sliderTrack = document.getElementById(`sliderTrack`);
-              const confirmButton = document.getElementById(`confirmButton`);
-              
-              sliderThumb.style.left = `0px`;
-              sliderThumb.innerHTML = `→`;
-              isSliderComplete = false;
-              confirmButton.disabled = true;
-              
-              document.getElementById(`confirmationModal`).classList.remove(`hidden`);
-          }
-  
-          async function generateInvoice(productId) {
-              try {
-                  const response = await fetch(`${API_URL}/generate-invoice`, {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ product_id: productId }),
-                  });
-  
-                  const result = await response.json();
-                  console.log(`API Response:`, result);
-  
-                  if (result.success) {
-                      window.location.href = `invoice?trx=${result.data.transaction_id}`;
-                  } else {
-                      alert(`Gagal membuat invoice: ${result.message}`);
-                  }
-              } catch (error) {
-                  console.error(`Error:`, error);
-                  alert(`Terjadi kesalahan dalam membuat invoice.`);
-              }
-          }
-  
-          document.addEventListener(`DOMContentLoaded`, () => {
-    const sliderThumb = document.getElementById(`sliderThumb`);
-    const sliderTrack = document.getElementById(`sliderTrack`);
-    const slider = sliderThumb.parentElement;
-    const confirmButton = document.getElementById(`confirmButton`);
-    const cancelButton = document.getElementById(`cancelButton`);
-    const modal = document.getElementById(`confirmationModal`);
+                if (data.success) {
+                    productList.innerHTML = data.products.map(product => createProductCard(product)).join('');
+                } else {
+                    productList.innerHTML = `
+                        <div class="text-red-500 text-center bg-red-50 p-4 rounded-lg col-span-full">
+                            Gagal memuat produk: ${data.message || 'Terjadi kesalahan'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                productList.innerHTML = `
+                    <div class="text-red-500 text-center bg-red-50 p-4 rounded-lg col-span-full">
+                        Terjadi kesalahan saat mengambil data dari server.
+                    </div>
+                `;
+            }
+        }
 
-    // Fungsi umum untuk mengatur posisi slider
-    function handleSliderMove(clientX) {
-        const sliderRect = slider.getBoundingClientRect();
-        const thumbRect = sliderThumb.getBoundingClientRect();
-        let newLeft = clientX - sliderRect.left - thumbRect.width / 2;
-
-        newLeft = Math.max(0, Math.min(newLeft, sliderRect.width - thumbRect.width));
-        sliderThumb.style.left = `${newLeft}px`;
-
-        if (newLeft >= sliderRect.width - thumbRect.width - 5) {
-            isSliderComplete = true;
-            confirmButton.disabled = false;
-            sliderThumb.innerHTML = `✓`;
-        } else {
+        // Show confirmation modal
+        function showConfirmation(productId, productName, productPrice) {
+            selectedProductId = productId;
+            
+            document.getElementById('confirmationText').innerHTML = 
+                `Apakah Anda yakin ingin membeli <strong>${productName}</strong> dengan harga <strong>Rp ${productPrice.toLocaleString('id-ID')}</strong>?`;
+            
+            const sliderThumb = document.getElementById('sliderThumb');
+            sliderThumb.style.left = '0px';
+            sliderThumb.innerHTML = '→';
             isSliderComplete = false;
-            confirmButton.disabled = true;
-            sliderThumb.innerHTML = `→`;
+            document.getElementById('confirmButton').disabled = true;
+            
+            document.getElementById('confirmationModal').classList.remove('hidden');
         }
-    }
 
-    // Event listener untuk touch events
-    sliderTrack.addEventListener(`touchstart`, (e) => {
-        e.preventDefault();
-        const touch = e.touches[0];
-        const startX = touch.clientX;
+        // Generate invoice and redirect
+        async function generateInvoice(productId) {
+            try {
+                const response = await fetch(`${API_URL}/generate-invoice`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_id: productId }),
+                });
 
-        const moveHandler = (moveEvent) => {
-            moveEvent.preventDefault();
-            const currentTouch = moveEvent.touches[0];
-            handleSliderMove(currentTouch.clientX);
-        };
+                const result = await response.json();
+                console.log(`API Response:`, result);
 
-        const endHandler = () => {
-            if (!isSliderComplete) {
-                sliderThumb.style.left = `0px`;
+                if (result.success) {
+                    window.location.href = `invoice?trx=${result.data.transaction_id}`;
+                } else {
+                    alert(`Gagal membuat invoice: ${result.message}`);
+                }
+            } catch (error) {
+                console.error(`Error:`, error);
+                alert(`Terjadi kesalahan dalam membuat invoice.`);
             }
-            document.removeEventListener(`touchmove`, moveHandler);
-            document.removeEventListener(`touchend`, endHandler);
-        };
-
-        document.addEventListener(`touchmove`, moveHandler);
-        document.addEventListener(`touchend`, endHandler);
-    });
-
-    // Event listener untuk mouse events
-    sliderTrack.addEventListener(`mousedown`, (e) => {
-        e.preventDefault();
-        const startX = e.clientX;
-
-        const moveHandler = (moveEvent) => {
-            moveEvent.preventDefault();
-            handleSliderMove(moveEvent.clientX);
-        };
-
-        const upHandler = () => {
-            if (!isSliderComplete) {
-                sliderThumb.style.left = `0px`;
-            }
-            document.removeEventListener(`mousemove`, moveHandler);
-            document.removeEventListener(`mouseup`, upHandler);
-        };
-
-        document.addEventListener(`mousemove`, moveHandler);
-        document.addEventListener(`mouseup`, upHandler);
-    });
-
-    confirmButton.addEventListener(`click`, () => {
-        if (isSliderComplete && selectedProductId) {
-            modal.classList.add(`hidden`);
-            generateInvoice(selectedProductId);
         }
-    });
 
-    cancelButton.addEventListener(`click`, () => {
-        modal.classList.add(`hidden`);
-    });
-});
+        // Event listeners when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const sliderThumb = document.getElementById('sliderThumb');
+            const sliderTrack = document.getElementById('sliderTrack');
+            const slider = sliderThumb.parentElement;
+            const confirmButton = document.getElementById('confirmButton');
+            const cancelButton = document.getElementById('cancelButton');
+            const confirmationModal = document.getElementById('confirmationModal');
 
-loadProducts();
-      </script>
-  </body>
-  </html>
+            // Handle slider movement
+            function handleSliderMove(clientX) {
+                const sliderRect = slider.getBoundingClientRect();
+                const thumbRect = sliderThumb.getBoundingClientRect();
+                let newLeft = clientX - sliderRect.left - thumbRect.width / 2;
+
+                newLeft = Math.max(0, Math.min(newLeft, sliderRect.width - thumbRect.width));
+                sliderThumb.style.left = `${newLeft}px`;
+
+                if (newLeft >= sliderRect.width - thumbRect.width - 5) {
+                    isSliderComplete = true;
+                    confirmButton.disabled = false;
+                    sliderThumb.innerHTML = '✓';
+                } else {
+                    isSliderComplete = false;
+                    confirmButton.disabled = true;
+                    sliderThumb.innerHTML = '→';
+                }
+            }
+
+            // Touch events for slider
+            sliderTrack.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+
+                const moveHandler = (moveEvent) => {
+                    moveEvent.preventDefault();
+                    const currentTouch = moveEvent.touches[0];
+                    handleSliderMove(currentTouch.clientX);
+                };
+
+                const endHandler = () => {
+                    if (!isSliderComplete) {
+                        sliderThumb.style.left = '0px';
+                    }
+                    document.removeEventListener('touchmove', moveHandler);
+                    document.removeEventListener('touchend', endHandler);
+                };
+
+                document.addEventListener('touchmove', moveHandler);
+                document.addEventListener('touchend', endHandler);
+            });
+
+            // Mouse events for slider
+            sliderTrack.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+
+                const moveHandler = (moveEvent) => {
+                    moveEvent.preventDefault();
+                    handleSliderMove(moveEvent.clientX);
+                };
+
+                const upHandler = () => {
+                    if (!isSliderComplete) {
+                        sliderThumb.style.left = '0px';
+                    }
+                    document.removeEventListener('mousemove', moveHandler);
+                    document.removeEventListener('mouseup', upHandler);
+                };
+
+                document.addEventListener('mousemove', moveHandler);
+                document.addEventListener('mouseup', upHandler);
+            });
+
+            // Confirm button click
+            confirmButton.addEventListener('click', () => {
+                if (isSliderComplete && selectedProductId) {
+                    confirmationModal.classList.add('hidden');
+                    generateInvoice(selectedProductId);
+                }
+            });
+
+            // Cancel button click
+            cancelButton.addEventListener('click', () => {
+                confirmationModal.classList.add('hidden');
+            });
+
+            // Load products on page load
+            loadProducts();
+        });
+    </script>
+</body>
+</html>

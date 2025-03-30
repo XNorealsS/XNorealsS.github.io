@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XNorealSZ - Premium WallHack PUBG Mobile</title>
+    <!-- Menggunakan Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font dari Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- AOS library untuk animasi scroll -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glass-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .shine-effect:after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+            transform: rotate(30deg);
+            transition: 0.6s;
+            opacity: 0;
+        }
+        .shine-effect:hover:after {
+            opacity: 1;
+            left: 100%;
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #3B82F6, #4F46E5);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            z-index: 1;
+        }
+        .btn-primary:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+        .btn-primary:hover:after {
+            width: 100%;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+        .social-icon {
+            transition: transform 0.3s;
+        }
+        .social-icon:hover {
+            transform: scale(1.2);
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+        .count-item {
+            transition: all 0.5s ease;
+        }
+        .count-item:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Progress bar animation */
+        .progress-bar {
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(to right, #3B82F6, #4F46E5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #3B82F6, #4F46E5);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #2563EB, #4338CA);
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-800 via-blue-600 to-indigo-800 min-h-screen">
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header dengan Navbar -->
+    <header class="py-2 px-6 sticky top-0 z-50 glass-effect" id="navbar">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+                <div>
+                    <h2 class="text-blue-900 font-bold text-xl">XNOREALSZ IDN</h2>
+                </div>
+            </div>
+            
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-6">
+                <a href="#beranda" class="text-blue-900 hover:text-blue-600 font-medium transition">Beranda</a>
+                <a href="#fitur" class="text-blue-900 hover:text-blue-600 font-medium transition">Fitur</a>
+                <a href="#paket" class="text-blue-900 hover:text-blue-600 font-medium transition">Paket</a>
+                <a href="#panduan" class="text-blue-900 hover:text-blue-600 font-medium transition">Panduan</a>
+                <a href="#faq" class="text-blue-900 hover:text-blue-600 font-medium transition">FAQ</a>
+            </nav>
+            
+            <!-- Login/Register Button (Desktop) -->
+            <div class="hidden md:block">
+                <button class="btn-primary">
+                    <i class="fas fa-shopping-cart mr-2"></i>BELI SEKARANG
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8 relative z-10" id="beranda">
+        <div class="max-w-4xl mx-auto">
+            <!-- Hero Section -->
+            <div class="glass-effect rounded-lg p-8 mb-6 shine-effect hover:shadow-lg transition-shadow text-center">
+                <h1 class="text-3xl font-bold text-blue-900 mb-4">WALLHACK PUBG MOBILE PREMIUM</h1>
+                <p class="text-blue-800 mb-6">Teknologi wallhack terbaik dengan sistem proteksi tingkat tinggi. Tampilkan posisi musuh secara real-time tanpa delay dan tanpa blink.</p>
+                <div class="flex justify-center">
+                    <a href="https://bit.ly/xnorealszch" class="btn-primary pulse">
+                        <i class="fas fa-bolt mr-2"></i>BELI SEKARANG
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Info Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <!-- Versi -->
+                <div class="glass-effect rounded-lg p-4 text-center hover:animate-float">
+                    <i class="fas fa-code-branch text-3xl text-blue-600 mb-2"></i>
+                    <h3 class="font-semibold text-blue-900 mb-2">Versi Terbaru</h3>
+                    <p class="text-sm text-blue-800">WH VISION 3.7 (Update Maret 2025)</p>
+                </div>
+
+                <!-- Support -->
+                <div class="glass-effect rounded-lg p-4 text-center hover:animate-float">
+                    <i class="fas fa-mobile-alt text-3xl text-blue-600 mb-2"></i>
+                    <h3 class="font-semibold text-blue-900 mb-2">Support Device</h3>
+                    <p class="text-sm text-blue-800">Semua HP Root dengan Zygisk Module</p>
+                </div>
+
+                <!-- Kontak -->
+                <div class="glass-effect rounded-lg p-4 text-center hover:animate-float">
+                    <i class="fas fa-headset text-3xl text-blue-600 mb-2"></i>
+                    <h3 class="font-semibold text-blue-900 mb-2">Customer Support</h3>
+                    <p class="text-sm text-blue-800">Admin: @Only_NoRealss</p>
+                </div>
+            </div>
+
+            <!-- Fitur Section -->
+            <div class="glass-effect rounded-lg p-6 mb-6" id="fitur">
+                <h2 class="text-xl font-bold text-blue-900 mb-4">Fitur Utama Wallhack</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white mr-3 flex-shrink-0">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-blue-900">Anti-Detection Protection</h4>
+                            <p class="text-sm text-blue-800">Teknologi protection anti detection yang sudah teruji</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white mr-3 flex-shrink-0">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-blue-900">Sistem Enkripsi Canggih</h4>
+                            <p class="text-sm text-blue-800">Keamanan ekstra untuk melindungi akun pengguna</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white mr-3 flex-shrink-0">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-blue-900">Real-Time Position</h4>
+                            <p class="text-sm text-blue-800">Tampilkan posisi musuh secara real-time tanpa delay</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white mr-3 flex-shrink-0">
+                            <i class="fas fa-sync"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-blue-900">No Blink System</h4>
+                            <p class="text-sm text-blue-800">Tidak ada blink atau gangguan visual saat gameplay</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white mr-3 flex-shrink-0">
+                            <i class="fas fa-map"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-blue-900">Full Map Support</h4>
+                            <p class="text-sm text-blue-800">Kompatibel dengan semua map dan mode dalam game</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white mr-3 flex-shrink-0">
+                            <i class="fas fa-wrench"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-blue-900">Auto Update</h4>
+                            <p class="text-sm text-blue-800">Update otomatis tersedia untuk versi terbaru</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+         
+            
+            <!-- Panduan Penggunaan Section -->
+            <div class="glass-effect rounded-lg p-6 mb-6" id="panduan">
+                <h2 class="text-xl font-bold text-blue-900 mb-4">Panduan Penggunaan</h2>
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white mr-3">1</div>
+                        <p class="text-blue-800">Pastikan perangkat sudah root</p>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white mr-3">2</div>
+                        <p class="text-blue-800">Install Zygisk Module terlebih dahulu</p>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white mr-3">3</div>
+                        <p class="text-blue-800">Beli paket WH PUBGM sesuai kebutuhan</p>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white mr-3">4</div>
+                        <p class="text-blue-800">Download file wallhack sesuai jenis perangkat</p>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white mr-3">5</div>
+                        <p class="text-blue-800">Ikuti panduan instalasi lengkap di channel Telegram</p>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <a href="https://t.me/xnorealszch" class="btn-primary">
+                            <i class="fab fa-telegram mr-2"></i> Join Channel Telegram
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="glass-effect rounded-lg p-6 mb-6" id="faq">
+                <h2 class="text-xl font-bold text-blue-900 mb-4">FAQ - Pertanyaan Umum</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg p-4">
+                        <h3 class="font-medium text-blue-900">Apakah bisa di HP non-root?</h3>
+                        <p class="text-sm text-blue-800">Saat ini hanya support untuk HP root saja, karena membutuhkan Zygisk Module.</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4">
+                        <h3 class="font-medium text-blue-900">Bagaimana cara install?</h3>
+                        <p class="text-sm text-blue-800">Pastikan HP sudah di-root, install Zygisk, lalu ikuti panduan lengkap di channel Telegram kami.</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4">
+                        <h3 class="font-medium text-blue-900">Ada berapa jenis wallhack?</h3>
+                        <p class="text-sm text-blue-800">Ada 2 varian: [XN]WH_VISION_3.7b.zip untuk HP high-end dan [XN]WH_VISION_3.7x.zip untuk HP low-end.</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4">
+                        <h3 class="font-medium text-blue-900">Apa risikonya?</h3>
+                        <p class="text-sm text-blue-800">Meskipun menggunakan teknologi anti-deteksi canggih, disarankan pakai akun kedua untuk keamanan.</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-4">
+                        <h3 class="font-medium text-blue-900">Bagaimana cara memperpanjang?</h3>
+                        <p class="text-sm text-blue-800">Beli paket baru di link pembelian dan gunakan key yang sama.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="glass-effect rounded-lg p-6 mb-6 text-center">
+                <h2 class="text-xl font-bold text-blue-900 mb-4">Siap Untuk Meningkatkan Gameplay Anda?</h2>
+                <p class="text-blue-800 mb-6">Dapatkan keunggulan dalam pertempuran dengan wallhack premium XNorealSZ</p>
+                <div class="flex flex-col md:flex-row justify-center gap-4">
+                    <a href="https://bit.ly/xnorealszch" class="btn-primary">
+                        <i class="fas fa-shopping-cart mr-2"></i> Beli Sekarang
+                    </a>
+                    <a href="https://bit.ly/xnresetkeys" class="btn-primary bg-indigo-600">
+                        <i class="fas fa-key mr-2"></i> Reset Key
+                    </a>
+                   
+                </div>
+            </div>
+
+            <!-- Kontak -->
+            <div class="glass-effect rounded-lg p-6 mb-6 text-center">
+                <h2 class="text-xl font-bold text-blue-900 mb-4">Butuh Bantuan?</h2>
+                <p class="text-blue-800 mb-4">Hubungi customer support kami untuk pertanyaan lebih lanjut</p>
+                <a href="https://t.me/Only_NoRealss" class="btn-primary">
+                    <i class="fab fa-telegram mr-2"></i> Hubungi Admin
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-blue-200 py-6 relative z-10">
+        <div class="container mx-auto">
+            <div class="flex justify-center space-x-4 mb-4">
+                <a href="#" class="social-icon text-blue-200 hover:text-white transition duration-300">
+                    <i class="fab fa-telegram text-2xl"></i>
+                </a>
+                <a href="#" class="social-icon text-blue-200 hover:text-white transition duration-300">
+                    <i class="fab fa-youtube text-2xl"></i>
+                </a>
+                <a href="#" class="social-icon text-blue-200 hover:text-white transition duration-300">
+                    <i class="fab fa-instagram text-2xl"></i>
+                </a>
+            </div>
+            <p class="text-sm opacity-75">
+                &copy; 2025 XNorealSZ - Premium PUBG Mobile Wallhack<br>
+                <span class="text-xs">Disclaimer: Gunakan produk ini dengan risiko sendiri. Kami menyarankan penggunaan pada akun sekunder.</span>
+            </p>
+        </div>
+    </footer>
+    
+    <script>
+        // Inisialisasi AOS untuk animasi saat scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init();
+            
+            // Progress bar saat scroll
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.scrollY;
+                let docHeight = document.body.offsetHeight;
+                let winHeight = window.innerHeight;
+                let scrollPercent = (scrollTop) / (docHeight - winHeight);
+                let scrollPercentRounded = Math.round(scrollPercent * 100);
+                
+                document.getElementById('progressBar').style.width = scrollPercentRounded + '%';
+            });
+        });
+    </script>
+</body>
+</html>
