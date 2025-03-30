@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+  <html lang="id">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Pilih Produk</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen flex items-center justify-center p-4">
+      <div class="container mx-auto max-w-md">
+          <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+              <div class="bg-blue-600 text-white p-6">
+                  <h2 class="text-3xl font-bold text-center">XN GATEWAY</h2>
+              </div>
+              
+              <div class="p-6">
+                  <div id="product-list" class="space-y-4">
+                      <div class="flex justify-center items-center">
+                          <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                      </div>
+                  </div>
+                  </br>
+                  <h3>Sudah Punya Key <a class="text-blue-600" href="/resetkey">keys Setting</a></h3>
+                  </div>
+              </div>
+      
+          </div>
+  
+      <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+          <div class="bg-white rounded-2xl w-96 p-6 shadow-2xl">
+              <h3 class="text-2xl font-bold mb-4 text-blue-700">Konfirmasi Pembelian</h3>
+              <p id="confirmationText" class="text-gray-600 mb-6"></p>
+              
+              <div class="relative w-full h-12 bg-blue-100 rounded-full mb-4 touch-none">
+                  <div id="sliderThumb" class="absolute left-0 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white pointer-events-none">
+                      →
+                  </div>
+                  <div id="sliderTrack" class="absolute inset-0 z-10"></div>
+              </div>
+              <p class="text-sm text-center text-gray-500 mb-6">Geser tombol ke kanan untuk konfirmasi</p>
+              
+              <div class="flex space-x-4">
+                  <button id="cancelButton" class="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition">
+                      Batal
+                  </button>
+                  <button id="confirmButton" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition" disabled>
+                      Konfirmasi
+                  </button>
+              </div>
+          </div>
+      </div>
+  
+      <script>
+          const API_URL = 'https://xnorealszzid.my.id/api';
+          let selectedProductId = null;
+          let isSliderComplete = false;
+  
+          async function loadProducts() {
+              const productList = document.getElementById(`product-list`);
+  
+              try {
+                  const res = await fetch(`${API_URL}/products`);
+                  const data = await res.json();
+                  
+                  if (data.success) {
+                    productList.innerHTML = data.products.map(product => `
+                        <button onclick="showConfirmation(${product.id}, '${product.name}', ${product.price})"
+                            class="w-full bg-blue-50 text-blue-800 px-4 py-3 rounded-lg hover:bg-blue-100 transition flex justify-between items-center">
+                            <span class="font-semibold">${product.name}</span>
+                            <span class="text-blue-600 font-bold">Rp ${Number(product.price).toLocaleString('id-ID')}</span>
+                        </button>
+                    `).join('');
+                } else {
+                
+                      productList.innerHTML = `
+                          <div class="text-red-500 text-center bg-red-50 p-4 rounded-lg">
+                              Gagal memuat produk
+                          </div>
+                      `;
+                  }
+              } catch (error) {
+                  productList.innerHTML = `
+                      <div class="text-red-500 text-center bg-red-50 p-4 rounded-lg">
+                          Terjadi kesalahan
+                      </div>
+                  `;
+              }
+          }
+  
+          function showConfirmation(productId, productName, productPrice) {
+              selectedProductId = productId;
+              document.getElementById(`confirmationText`).innerHTML = 
+                  `Apakah Anda yakin ingin membeli <strong>${productName}</strong> dengan harga <strong>Rp ${productPrice.toLocaleString()}</strong>?`;
+              
+              const sliderThumb = document.getElementById(`sliderThumb`);
+              const sliderTrack = document.getElementById(`sliderTrack`);
+              const confirmButton = document.getElementById(`confirmButton`);
+              
+              sliderThumb.style.left = `0px`;
+              sliderThumb.innerHTML = `→`;
+              isSliderComplete = false;
+              confirmButton.disabled = true;
+              
+              document.getElementById(`confirmationModal`).classList.remove(`hidden`);
+          }
+  
+          async function generateInvoice(productId) {
+              try {
+                  const response = await fetch(`${API_URL}/generate-invoice`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ product_id: productId }),
+                  });
+  
+                  const result = await response.json();
+                  console.log(`API Response:`, result);
+  
+                  if (result.success) {
+                      window.location.href = `invoice?trx=${result.data.transaction_id}`;
+                  } else {
+                      alert(`Gagal membuat invoice: ${result.message}`);
+                  }
+              } catch (error) {
+                  console.error(`Error:`, error);
+                  alert(`Terjadi kesalahan dalam membuat invoice.`);
+              }
+          }
+  
+          document.addEventListener(`DOMContentLoaded`, () => {
+              const sliderThumb = document.getElementById(`sliderThumb`);
+              const sliderTrack = document.getElementById(`sliderTrack`);
+              const slider = sliderThumb.parentElement;
+              const confirmButton = document.getElementById(`confirmButton`);
+              const cancelButton = document.getElementById(`cancelButton`);
+              const modal = document.getElementById(`confirmationModal`);
+              
+              sliderTrack.addEventListener(`touchstart`, (e) => {
+                  e.preventDefault();
+                  const touch = e.touches[0];
+                  const thumbRect = sliderThumb.getBoundingClientRect();
+                  const sliderRect = slider.getBoundingClientRect();
+                  const startX = touch.clientX - sliderRect.left;
+                  
+                  const moveHandler = (moveEvent) => {
+                      moveEvent.preventDefault();
+                      const currentTouch = moveEvent.touches[0];
+                      let newLeft = currentTouch.clientX - sliderRect.left - thumbRect.width / 2;
+                      
+                      newLeft = Math.max(0, Math.min(newLeft, sliderRect.width - thumbRect.width));
+                      sliderThumb.style.left = `${newLeft}px`;
+                      
+                      if (newLeft >= sliderRect.width - thumbRect.width - 5) {
+                          isSliderComplete = true;
+                          confirmButton.disabled = false;
+                          sliderThumb.innerHTML = `✓`;
+                      } else {
+                          isSliderComplete = false;
+                          confirmButton.disabled = true;
+                          sliderThumb.innerHTML = `→`;
+                      }
+                  };
+                  
+                  const endHandler = () => {
+                      if (!isSliderComplete) {
+                          sliderThumb.style.left = `0px`;
+                      }
+                      document.removeEventListener(`touchmove`, moveHandler);
+                      document.removeEventListener(`touchend`, endHandler);
+                  };
+                  
+                  document.addEventListener(`touchmove`, moveHandler);
+                  document.addEventListener(`touchend`, endHandler);
+              });
+              
+              confirmButton.addEventListener(`click`, () => {
+                  if (isSliderComplete && selectedProductId) {
+                      modal.classList.add(`hidden`);
+                      generateInvoice(selectedProductId);
+                  }
+              });
+              
+              cancelButton.addEventListener(`click`, () => {
+                  modal.classList.add(`hidden`);
+              });
+          });
+  
+          loadProducts();
+      </script>
+  </body>
+  </html>
