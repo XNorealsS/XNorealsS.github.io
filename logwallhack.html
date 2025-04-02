@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Log Monitor</title>
+    <script src="https://js.pusher.com/8.0.1/pusher.min.js"></script>
+</head>
+<body>
+    <h1>Real-Time Log Monitor</h1>
+    <pre id="log"></pre>
+
+    <script>
+        // Inisialisasi Pusher
+        var pusher = new Pusher('dfa591938cfcedd0450a', {
+            cluster: 'ap1',
+            encrypted: true
+        });
+
+        // Berlangganan channel
+        const channel = pusher.subscribe('logs');
+
+        // Mendengarkan event log
+        channel.bind('log_event', function(data) {
+            const logElement = document.getElementById('log');
+            logElement.textContent += data + '\n';
+        });
+
+        
+    </script>
+</body>
+</html>
