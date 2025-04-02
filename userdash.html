@@ -217,16 +217,54 @@
         let userSession = null;
 
         // Check if user is already logged in
-        function checkSession() {
-            const savedSession = localStorage.getItem('shaderSession');
-            if (savedSession) {
-                userSession = JSON.parse(savedSession);
-                showSettingsPage();
-                updateUserInfo();
-            } else {
-                showLoginPage();
-            }
+// Add this function to fetch fresh data from the API
+function refreshUserData() {
+    // Only attempt to refresh if user is logged in
+    if (!userSession || !userSession.user_key) {
+        return;
+    }
+    
+    console.log("Refreshing user data from API...");
+    
+    axios.post(`${API_BASE_URL}/login`, {
+        user_key: userSession.user_key,
+        trxid: userSession.registrator || '' // Use stored transaction ID if available
+    }).then(response => {
+        if (response.data.status) {
+            // Update the session with fresh data
+            userSession = response.data.data;
+            localStorage.setItem('shaderSession', JSON.stringify(userSession));
+            updateUserInfo();
+            console.log("User data refreshed successfully");
+        } else {
+            console.error("Failed to refresh user data:", response.data.reason);
+            // Optional: Show notification if refresh fails
+            // showNotification('Session data refresh failed', 'error');
         }
+    }).catch(error => {
+        console.error("Error refreshing user data:", error);
+    });
+}
+
+// Modify the checkSession function to include refreshing data
+function checkSession() {
+    const savedSession = localStorage.getItem('shaderSession');
+    if (savedSession) {
+        userSession = JSON.parse(savedSession);
+        showSettingsPage();
+        updateUserInfo();
+        
+        // Add this line to refresh data from API
+        refreshUserData();
+    } else {
+        showLoginPage();
+    }
+}
+
+// Add event listener for page load/refresh
+window.addEventListener('load', function() {
+    checkSession();
+});
 
         // Login functionality
         document.getElementById('loginButton').addEventListener('click', () => {
@@ -589,6 +627,7 @@
 
         // Check session on load
         checkSession();
+        updateUserInfo();
     </script>
 </body>
 </html>
