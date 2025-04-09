@@ -1,4 +1,3 @@
-  
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,18 +17,15 @@
                     <span id="status-icon" class="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center mr-2">
                         <i class="fas fa-hourglass-half animate-pulse"></i>
                     </span>
-                      <h3  id="status-text"  class="text-sm font-medium text-blue-600">Menunggu Pembayaran</h3>
-
+                    <h3 id="status-text" class="text-sm font-medium text-blue-600">Menunggu Pembayaran</h3>
                 </div>
             </div>
         </div>
-
         <!-- Loading State -->
-        <div id="loading" class="bg-white rounded-lg shadow-md p-6 text-center mb-6">
+        <div id="loading" class="bg-white rounded-lg shadow-md p-6 text-center mb-6 hidden">
             <div class="animate-spin inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mb-4"></div>
             <p class="text-gray-600">Memuat informasi pembayaran...</p>
         </div>
-
         <!-- Error State -->
         <div id="error-container" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
             <div class="bg-red-100 text-red-700 p-4 rounded mb-4 flex items-center">
@@ -40,7 +36,6 @@
                 <i class="fas fa-redo mr-2"></i> Coba Lagi
             </button>
         </div>
-
         <!-- Payment Container -->
         <div id="payment-container" class="hidden">
             <!-- QRIS Code -->
@@ -58,13 +53,11 @@
                     </p>
                 </div>
             </div>
-
             <!-- Payment Details -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="text-xl font-semibold mb-4 flex items-center">
                     <i class="fas fa-info-circle text-blue-500 mr-2"></i> Detail Pembayaran
                 </h2>
-                
                 <div class="mb-6 pb-4 border-b">
                     <div class="flex justify-between mb-2">
                         <span class="text-gray-600">ID Transaksi:</span>
@@ -83,7 +76,6 @@
                         <span id="unique-code" class="font-medium text-blue-600">-</span>
                     </div>
                 </div>
-                
                 <div class="bg-blue-50 p-4 rounded-lg">
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-lg font-bold">Total Pembayaran:</span>
@@ -99,7 +91,6 @@
                         Pastikan transfer <strong>tepat sesuai</strong> nominal diatas
                     </p>
                 </div>
-
                 <!-- Countdown Timer -->
                 <div class="mt-4 flex justify-between items-center">
                     <span class="text-gray-600 text-sm">Berlaku hingga:</span>
@@ -109,14 +100,12 @@
                     </div>
                 </div>
             </div>
-
             <!-- Payment Verification -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <button id="check-payment" class="w-full bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-600 transition flex items-center justify-center">
                     <i class="fas fa-sync-alt mr-2"></i> Cek Status Pembayaran
                 </button>
             </div>
-
             <!-- Payment Instruction -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="text-lg font-semibold mb-3 flex items-center">
@@ -145,7 +134,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Payment Method List -->
             <div class="bg-white rounded-lg shadow-md p-4 mb-6">
                 <h3 class="font-semibold mb-2 text-sm text-gray-600">QRIS didukung oleh:</h3>
@@ -161,7 +149,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Success State -->
         <div id="success-container" class="bg-white rounded-lg shadow-md p-6 hidden">
             <div class="text-center">
@@ -177,106 +164,155 @@
                     </a>
                 </div>
             </div>
+            <!-- Container untuk menampilkan key setelah pembayaran sukses -->
+            <div id="user-key-container" class="bg-gray-100 rounded-lg p-4 mt-4 hidden">
+                <h3 class="text-lg font-semibold text-gray-700">Key:</h3>
+                <p id="user-key" class="text-lg font-bold text-green-600 bg-gray-200 p-2 rounded-lg break-all"></p>
+                <h3 class="text-lg font-semibold text-gray-700">Transaction Code:</h3>
+                <p id="trxid" class="text-lg font-bold text-blue-600 bg-gray-200 p-2 rounded-lg break-all"></p>
+                <p id="expired-date" class="text-sm text-gray-600 mt-2"></p>
+                <!-- Tombol Copy -->
+                <button id="copy-key" class="mt-3 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                    <i class="fas fa-copy"></i> Copy Key
+                </button>
+            </div>
+            <!-- Container untuk menampilkan informasi login reseller -->
+            <div id="reseller-info-container" class="bg-gray-100 rounded-lg p-4 mt-4 hidden">
+                <h3 class="text-lg font-semibold text-gray-700">Informasi Login Reseller:</h3>
+                <p class="text-sm text-gray-600 mb-2">Gunakan informasi berikut untuk login ke Reseller Panel:</p>
+                <div class="mt-2 mb2">
 
-            <!-- ✅ Container untuk menampilkan key setelah pembayaran sukses -->
-<div id="user-key-container" class="bg-gray-100 rounded-lg p-4 mt-4 hidden">
-    <h3 class="text-lg font-semibold text-gray-700">Key:</h3>
-    <p id="user-key" class="text-lg font-bold text-green-600 bg-gray-200 p-2 rounded-lg break-all"></p>
-    <h3 class="text-lg font-semibold text-gray-700">Transaction Code:</h3>
-    <p id="trxid" class="text-lg font-bold text-blue-600 bg-gray-200 p-2 rounded-lg break-all"></p>
-    <p id="expired-date" class="text-sm text-gray-600 mt-2"></p>
+                <a class="mt-5 mb-5 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" href="https://smkn1-lsm.sch.id/esdate/"> 
+                    <i class="fas fa-sync-alt"></i> LOGIN
+                </a>
+            </div>
 
-    <!-- Tombol Copy -->
-    <button id="copy-key" class="mt-3 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-        <i class="fas fa-copy"></i> Copy Key
-    </button>
-</div>
-
-
+                <div class="space-y-2">
+                    <div>
+                        <span class="font-bold text-gray-800">Username:</span>
+                        <span id="reseller-username" class="text-lg font-bold text-green-600 p-2 rounded-lg break-all"></span>
+                    </div>
+                    <div>
+                        <span class="font-bold text-gray-800">Password:</span>
+                        <span id="reseller-password" class="text-lg font-bold text-blue-600  p-2 rounded-lg break-all"></span>
+                    </div>
+                </div>
+                <!-- Tombol Copy -->
+                <button id="copy-username" class="mt-3 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                    <i class="fas fa-copy"></i> Copy Username
+                </button>
+                <button id="copy-password" class="mt-3 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 ml-2">
+                    <i class="fas fa-copy"></i> Copy Password
+                </button>
+            </div>
         </div>
     </div>
-
     <script>
- const API_URL = "https://xnorealszzid.my.id/api";
-const urlParams = new URLSearchParams(window.location.search);
-const transactionId = urlParams.get('trx');
+        const API_URL = "https://xnorealszzid.my.id/api";
+        const urlParams = new URLSearchParams(window.location.search);
+        const transactionId = urlParams.get('trx');
+        if (!transactionId) {
+            alert("Transaksi tidak ditemukan!");
+            window.location.href = "/";
+        }
 
-if (!transactionId) {
-    alert("Transaksi tidak ditemukan!");
-    window.location.href = "/";
-}
+        let transactionData = null;
+        let countdownInterval = null;
+        let isPaymentCompleted = false; // Variabel untuk melacak status pembayaran
 
-let transactionData = null;
-let countdownInterval = null;
+        let pollingInterval = null;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     loadInvoice();
     document.getElementById('check-payment').addEventListener('click', checkPaymentStatus);
     document.getElementById('copy-amount').addEventListener('click', copyAmount);
+    document.getElementById('copy-key').addEventListener('click', copyKey);
+    document.getElementById('copy-username').addEventListener('click', copyUsername);
+    document.getElementById('copy-password').addEventListener('click', copyPassword);
+
+    // Mulai polling otomatis
+    startPolling();
 });
 
-// ✅ Ambil detail invoice dari backend
-async function loadInvoice() {
-    showLoading();
-    hideError();
-    hidePaymentContainer();
-    
-    try {
-      const response = await fetch(`${API_URL}/get-invoice/${transactionId}`);
-        const result = await response.json();
-
-        if (result.success) {
-            transactionData = result.data;
+function startPolling() {
+    pollingInterval = setInterval(() => {
+        if (!isPaymentCompleted) {
             checkPaymentStatus();
-            updateUIWithTransactionData();
-            showPaymentContainer();
-            startCountdown();
         } else {
-            showError("Invoice tidak ditemukan.");
-            setTimeout(() => window.location.href = "/", 2000);
+            clearInterval(pollingInterval); // Hentikan polling jika pembayaran berhasil
         }
-    } catch (error) {
-        showError("Gagal terhubung ke server.");
-    } finally {
-        hideLoading();
-    }
+    }, 10000); // Periksa setiap 5 detik
 }
 
-// ✅ Tampilkan data invoice ke UI
-function updateUIWithTransactionData() {
-    document.getElementById('transaction-id').textContent = transactionData.transaction_id;
-    document.getElementById('item-name').textContent = transactionData.item_name;
-    document.getElementById('price').textContent = formatCurrency(transactionData.price);
-    document.getElementById('unique-code').textContent = formatCurrency(transactionData.unique_code);
-    document.getElementById('total-amount').textContent = formatCurrency(transactionData.total_amount);
-    document.getElementById('instruction-amount').textContent = formatCurrency(transactionData.total_amount);
-    document.getElementById('qris-image').src = transactionData.qris_url;
-    document.getElementById('qris-name').textContent = transactionData.qris_name;
-}
+        async function loadInvoice() {
+            showLoading();
+            hideError();
+            hidePaymentContainer();
+            try {
+                const response = await fetch(`${API_URL}/get-invoice/${transactionId}`);
+                const result = await response.json();
+                if (result.success) {
+                    transactionData = result.data;
+                    updateUIWithTransactionData();
+                    showPaymentContainer();
+                    startCountdown();
+                } else {
+                    showError("Invoice tidak ditemukan.");
+                    setTimeout(() => window.location.href = "/", 2000);
+                }
+            } catch (error) {
+                showError("Gagal terhubung ke server.");
+            } finally {
+                hideLoading();
+            }
+        }
 
-// ✅ Cek status pembayaran
-async function checkPaymentStatus() {
+        function updateUIWithTransactionData() {
+            document.getElementById('transaction-id').textContent = transactionData.transaction_id;
+            document.getElementById('item-name').textContent = transactionData.item_name;
+            document.getElementById('price').textContent = formatCurrency(transactionData.price);
+            document.getElementById('unique-code').textContent = formatCurrency(transactionData.unique_code);
+            document.getElementById('total-amount').textContent = formatCurrency(transactionData.total_amount);
+            document.getElementById('instruction-amount').textContent = formatCurrency(transactionData.total_amount);
+            document.getElementById('qris-image').src = transactionData.qris_url;
+            document.getElementById('qris-name').textContent = transactionData.qris_name;
+
+            // Handle paket reseller
+            if (transactionData.product_type === 'reseller') {
+                document.getElementById('user-key-container').classList.add('hidden');
+                document.getElementById('reseller-info-container').classList.remove('hidden');
+                document.getElementById('reseller-username').textContent = transactionData.reseller_username;
+                document.getElementById('reseller-password').textContent = transactionData.transaction_id;
+            }
+        }
+
+
+        async function checkPaymentStatus() {
+    if (isPaymentCompleted) return; // Hentikan jika pembayaran sudah berhasil
     if (!transactionData) return;
 
     setButtonLoading(true);
-
     try {
         const response = await fetch(`${API_URL}/check-payment/${transactionId}`);
         const result = await response.json();
 
         if (result.success && result.data.payment_status === "completed") {
+            isPaymentCompleted = true; // Tandai pembayaran sebagai selesai
             updatePaymentStatus("completed");
             clearInterval(countdownInterval);
             showSuccessContainer();
 
-            // 🔥 Tampilkan Key di Halaman 🔥
-            document.getElementById('user-key-container').classList.remove('hidden');
-            document.getElementById('trxid').textContent = result.data.transaction_id;
-            document.getElementById('user-key').textContent = result.data.user_key;
-            document.getElementById('expired-date').textContent = result.data.expired_date ? `Masa Berlaku: ${result.data.expired_date}` : "Unlimited";
-
-        } else {
-            
+            if (result.data.product_type === 'reseller') {
+                document.getElementById('reseller-username').textContent = result.data.username;
+                document.getElementById('reseller-password').textContent = result.data.transaction_id;
+            } else {
+                document.getElementById('user-key-container').classList.remove('hidden');
+                document.getElementById('trxid').textContent = result.data.transaction_id;
+                document.getElementById('user-key').textContent = result.data.user_key;
+                document.getElementById('expired-date').textContent = result.data.expired_date
+                    ? `Masa Berlaku: ${result.data.expired_date}`
+                    : "Unlimited";
+            }
         }
     } catch (error) {
         alert("Gagal mengecek pembayaran.");
@@ -285,131 +321,181 @@ async function checkPaymentStatus() {
     }
 }
 
+        async function startPaymentPolling() {
+            const MAX_POLLING_TIME = 3 * 60 * 1000; // 3 menit dalam milidetik
+            const POLLING_INTERVAL = 5000; // Periksa setiap 5 detik
+            let elapsedTime = 0;
 
-// ✅ Ubah status pembayaran di UI
-function updatePaymentStatus(status) {
+            showLoading();
+            try {
+                while (elapsedTime < MAX_POLLING_TIME) {
+                    const response = await fetch(`${API_URL}/check-payment/${transactionId}`);
+                    const result = await response.json();
+
+                    if (result.success && result.data.payment_status === "completed") {
+                        updatePaymentStatus("completed");
+                        clearInterval(countdownInterval);
+                        showSuccessContainer();
+                        if (result.data.product_type === 'reseller') {
+                            document.getElementById('reseller-info-container').classList.remove('hidden');
+                            document.getElementById('reseller-username').textContent = result.data.username;
+                            document.getElementById('reseller-password').textContent = result.data.transaction_id;
+                        } else {
+                            document.getElementById('user-key-container').classList.remove('hidden');
+                            document.getElementById('trxid').textContent = result.data.transaction_id;
+                            document.getElementById('user-key').textContent = result.data.user_key;
+                            document.getElementById('expired-date').textContent = result.data.expired_date
+                                ? `Masa Berlaku: ${result.data.expired_date}`
+                                : "Unlimited";
+                        }
+                        return; // Hentikan polling jika pembayaran berhasil
+                    }
+
+                    // Tunggu interval sebelum memeriksa lagi
+                    await new Promise(resolve => setTimeout(resolve, POLLING_INTERVAL));
+                    elapsedTime += POLLING_INTERVAL;
+                }
+
+                // Jika waktu habis
+                showError("Waktu pembayaran telah habis. Silakan coba lagi.");
+                updatePaymentStatus("expired");
+            } catch (error) {
+                showError("Gagal memeriksa status pembayaran.");
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function updatePaymentStatus(status) {
     const statusIcon = document.getElementById("status-icon");
     const statusText = document.getElementById("status-text");
 
     if (status === "completed") {
-      hidePaymentContainer();
+        // Sembunyikan payment container
+        hidePaymentContainer();
 
+        // Tampilkan success container
+        showSuccessContainer();
+
+        // Update status UI
         statusIcon.innerHTML = '<i class="fas fa-check"></i>';
         statusIcon.classList.replace('bg-blue-500', 'bg-green-500');
         statusText.textContent = "Pembayaran Berhasil";
         statusText.classList.replace('text-blue-600', 'text-green-600');
 
+        // Nonaktifkan tombol cek pembayaran
         document.getElementById("check-payment").disabled = true;
         document.getElementById("check-payment").textContent = "Lunas";
         document.getElementById("check-payment").classList.replace('bg-blue-500', 'bg-gray-500');
     } else {
+        // Jika status bukan completed, kembalikan ke status menunggu pembayaran
         statusIcon.innerHTML = '<i class="fas fa-hourglass-half animate-pulse"></i>';
         statusIcon.classList.replace('bg-green-500', 'bg-blue-500');
         statusText.textContent = "Menunggu Pembayaran";
         statusText.classList.replace('text-green-600', 'text-blue-600');
     }
 }
-
-// ✅ Copy Key ke Clipboard
-document.getElementById("copy-key").addEventListener("click", function () {
-    const keyText = document.getElementById("user-key").textContent;
-    navigator.clipboard.writeText(keyText).then(() => {
-        alert("Kunci berhasil disalin!");
-    }).catch(err => console.error("Gagal menyalin key: ", err));
-});
-
-
-// ✅ Countdown waktu pembayaran
-function startCountdown() {
-    if (countdownInterval) clearInterval(countdownInterval);
-
-    const countdownElement = document.getElementById('countdown');
-    const expiresAt = new Date(transactionData.expires_at).getTime();
-
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const timeLeft = expiresAt - now;
-
-        if (timeLeft <= 0) {
-            clearInterval(countdownInterval);
-            countdownElement.textContent = "Kadaluarsa";
-            countdownElement.classList.add('text-red-600');
-            return;
+        function copyAmount() {
+            if (!transactionData) return;
+            navigator.clipboard.writeText(transactionData.total_amount.toString())
+                .then(() => {
+                    const copyAmountButton = document.getElementById('copy-amount');
+                    copyAmountButton.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => copyAmountButton.innerHTML = '<i class="fas fa-copy"></i>', 1500);
+                })
+                .catch(err => console.error('Failed to copy: ', err));
         }
 
-        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        function copyKey() {
+            const keyText = document.getElementById("user-key").textContent;
+            navigator.clipboard.writeText(keyText).then(() => {
+                alert("Kunci berhasil disalin!");
+            }).catch(err => console.error("Gagal menyalin key: ", err));
+        }
 
-        countdownElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
-    }
+        function copyUsername() {
+            const usernameText = document.getElementById("reseller-username").textContent;
+            navigator.clipboard.writeText(usernameText).then(() => {
+                alert("Username berhasil disalin!");
+            }).catch(err => console.error("Gagal menyalin username: ", err));
+        }
 
-    updateCountdown();
-    countdownInterval = setInterval(updateCountdown, 1000);
-}
+        function copyPassword() {
+            const passwordText = document.getElementById("reseller-password").textContent;
+            navigator.clipboard.writeText(passwordText).then(() => {
+                alert("Password berhasil disalin!");
+            }).catch(err => console.error("Gagal menyalin password: ", err));
+        }
 
-// ✅ Copy jumlah pembayaran ke clipboard
-function copyAmount() {
-    if (!transactionData) return;
+        function startCountdown() {
+            if (countdownInterval) clearInterval(countdownInterval);
+            const countdownElement = document.getElementById('countdown');
+            const expiresAt = new Date(transactionData.expires_at).getTime();
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const timeLeft = expiresAt - now;
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownElement.textContent = "Kadaluarsa";
+                    countdownElement.classList.add('text-red-600');
+                    return;
+                }
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                countdownElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
+            }
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
 
-    navigator.clipboard.writeText(transactionData.total_amount.toString())
-        .then(() => {
-            const copyAmountButton = document.getElementById('copy-amount');
-            copyAmountButton.innerHTML = '<i class="fas fa-check"></i>';
-            setTimeout(() => copyAmountButton.innerHTML = '<i class="fas fa-copy"></i>', 1500);
-        })
-        .catch(err => console.error('Failed to copy: ', err));
-}
+        function showLoading() {
+            document.getElementById('loading').classList.remove('hidden');
+        }
 
-// 🔹 Utility Functions 🔹
-function showLoading() {
-    document.getElementById('loading').classList.remove('hidden');
-}
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+        }
 
-function hideLoading() {
-    document.getElementById('loading').classList.add('hidden');
-}
+        function showError(message) {
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('error-container').classList.remove('hidden');
+        }
 
-function showError(message) {
-    document.getElementById('error-message').textContent = message;
-    document.getElementById('error-container').classList.remove('hidden');
-}
+        function hideError() {
+            document.getElementById('error-container').classList.add('hidden');
+        }
 
-function hideError() {
-    document.getElementById('error-container').classList.add('hidden');
-}
+        function showPaymentContainer() {
+            document.getElementById('payment-container').classList.remove('hidden');
+        }
 
-function showPaymentContainer() {
-    document.getElementById('payment-container').classList.remove('hidden');
-}
+        function hidePaymentContainer() {
+            document.getElementById('payment-container').classList.add('hidden');
+        }
 
-function hidePaymentContainer() {
-    document.getElementById('payment-container').classList.add('hidden');
-}
+        function showSuccessContainer() {
+            document.getElementById('success-container').classList.remove('hidden');
+        }
 
-function showSuccessContainer() {
-    document.getElementById('success-container').classList.remove('hidden');
-}
+        function hideSuccessContainer() {
+            document.getElementById('success-container').classList.add('hidden');
+        }
 
-function hideSuccessContainer() {
-    document.getElementById('success-container').classList.add('hidden');
-}
+        function formatCurrency(amount) {
+            return 'Rp ' + new Intl.NumberFormat('id-ID').format(amount);
+        }
 
-function formatCurrency(amount) {
-    return 'Rp ' + new Intl.NumberFormat('id-ID').format(amount);
-}
-
-function setButtonLoading(loading) {
-    const button = document.getElementById("check-payment");
-    if (loading) {
-        button.disabled = true;
-        button.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i> Memeriksa...';
-    } else {
-        button.disabled = false;
-        button.innerHTML = '<i class="fas fa-sync-alt mr-2"></i> Cek Status Pembayaran';
-    }
-}
-
+        function setButtonLoading(loading) {
+            const button = document.getElementById("check-payment");
+            if (loading) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i> Memeriksa...';
+            } else {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-sync-alt mr-2"></i> Cek Status Pembayaran';
+            }
+        }
     </script>
 </body>
 </html>

@@ -13,10 +13,9 @@
         <div class="bg-white rounded-2xl shadow-2xl overflow-hidden mb-6">
             <div class="bg-blue-600 text-white p-6">
                 <h2 class="text-3xl font-bold text-center">XN GATEWAY</h2>
-                <p class="text-center text-blue-100 mt-2">select item to purchase</p>
+                <p class="text-center text-blue-100 mt-2">Pilih item untuk pembelian</p>
             </div>
         </div>
-
         <!-- Product Cards -->
         <div class="glass-effect rounded-lg p-6 mb-6 bg-white bg-opacity-90 shadow-lg" id="produk">
             <h2 class="text-xl font-bold text-blue-900 mb-4">Produk & Harga</h2>
@@ -29,25 +28,35 @@
                 </div>
             </div>
         </div>
-
         <!-- Keys Setting Link -->
         <div class="text-center mb-6">
             <h3 class="text-blue-800 mb-2">Sudah Punya Key?</h3>
             <a href="/resetkey" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition inline-block">
                 <i class="fas fa-key mr-2"></i>Keys Setting
             </a>
-            <!-- <a href="download.html" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition inline-block">
-                <i class="fas fa-download mr-2"></i>Download File
-            </a> -->
         </div>
     </div>
-
     <!-- Confirmation Modal -->
     <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
         <div class="bg-white rounded-2xl w-96 p-6 shadow-2xl">
             <h3 class="text-2xl font-bold mb-4 text-blue-700">Konfirmasi Pembelian</h3>
             <p id="confirmationText" class="text-gray-600 mb-6"></p>
-            
+            <!-- Input Username Reseller -->
+            <div id="resellerInput" class="hidden mb-4">
+                <label for="resellerUsername" class="block text-blue-800 font-bold mb-2">Username Reseller:</label>
+                <input type="text" id="resellerUsername" class="w-full p-2 border border-blue-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Masukkan username reseller">
+            </div>
+            <!-- Syarat & Ketentuan -->
+            <div id="resellerTerms" class="hidden mb-4 text-sm text-gray-600">
+                <p><strong>Syarat & Ketentuan:</strong></p>
+                <ul class="list-disc pl-6">
+                    <li>Paket reseller memberikan akses ke Reseller Panel.</li>
+                    <li>Harga Rp 150.000 berlaku untuk selamanya.</li>
+                    <li>Reseller Mendapat Saldo Account Bonus 250k.</li>
+                    <li>Username reseller akan di gunakan untuk login nanti</li>
+                </ul>
+            </div>
+            <!-- Slider -->
             <div class="relative w-full h-12 bg-blue-100 rounded-full mb-4 touch-none">
                 <div id="sliderThumb" class="absolute left-0 top-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white pointer-events-none">
                     →
@@ -55,7 +64,6 @@
                 <div id="sliderTrack" class="absolute inset-0 z-10"></div>
             </div>
             <p class="text-sm text-center text-gray-500 mb-6">Geser tombol ke kanan untuk konfirmasi</p>
-            
             <div class="flex space-x-4">
                 <button id="cancelButton" class="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition">
                     Batal
@@ -66,47 +74,59 @@
             </div>
         </div>
     </div>
-
     <script>
         const API_URL = 'https://xnorealszzid.my.id/api';
         let selectedProductId = null;
+        let selectedProductName = null;
         let isSliderComplete = false;
 
         // Function to create product card
         function createProductCard(product) {
-            const bestDeal = product.id === 4 ? '<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">BEST DEAL</span>' : '';
-            
-            return `
-                <div class="bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
-                    <div class="bg-blue-100 rounded-t-lg p-2 text-center">
-                        <h3 class="font-bold text-blue-800">${product.name}</h3>
-                        ${bestDeal}
-                    </div>
-                    <div class="p-4 text-center">
-                        <div class="text-2xl font-bold text-blue-600 mb-2">Rp ${Number(product.price).toLocaleString('id-ID')}</div>
-                        <ul class="text-sm text-blue-800 mb-4 text-left">
-                            <li class="mb-1 flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Akses Zygisk Module 3.7</li>
-                            <li class="mb-1 flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Support All Devices</li>
-                            <li class="mb-1 flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Auto Update</li>
-                            <li class="mb-1 flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> ${product.id >= 3 ? 'Premium ' : ''}Customer Support</li>
-                        </ul>
-                        <button onclick="showConfirmation(${product.id}, '${product.name}', ${product.price})" 
-                            class="bg-blue-600 text-white py-2 px-4 rounded-lg w-full hover:bg-blue-700 transition">
-                            BELI SEKARANG
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
+    const bestDeal = product.id === 4 ? '<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">BEST DEAL</span>' : '';
+    const isReseller = product.name.toLowerCase().includes('reseller');
+    const resellerLabel = isReseller ? '<span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full ml-2">RESELLER</span>' : '';
 
+    // Customize product features based on product name
+    const features = isReseller
+        ? [
+            "Akses Reseller Panel",
+            "Saldo Awal Rp 250.000",
+            "Bisa TopUp Saldo",
+            "Support 24/7",
+            "Berlaku Permanent"
+        ]
+        : [
+            "Akses Zygisk Module 3.7",
+            "Support All Devices",
+            "Auto Update",
+            `${product.id >= 3 ? 'Premium ' : ''}Customer Support`
+        ];
+
+    return `
+        <div class="bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+            <div class="bg-blue-100 rounded-t-lg p-2 text-center">
+                <h3 class="font-bold text-blue-800">${product.name}</h3>
+                ${bestDeal} ${resellerLabel}
+            </div>
+            <div class="p-4 text-center">
+                <div class="text-2xl font-bold text-blue-600 mb-2">Rp ${Number(product.price).toLocaleString('id-ID')}</div>
+                <ul class="text-sm text-blue-800 mb-4 text-left">
+                    ${features.map(feature => `<li class="mb-1 flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>${feature}</li>`).join('')}
+                </ul>
+                <button onclick="showConfirmation(${product.id}, '${product.name}', ${product.price})" data-product-name="${product.name}"
+                    class="bg-blue-600 text-white py-2 px-4 rounded-lg w-full hover:bg-blue-700 transition">
+                    BELI SEKARANG
+                </button>
+            </div>
+        </div>
+    `;
+}
         // Load products from API
         async function loadProducts() {
             const productList = document.getElementById('product-list');
-
             try {
                 const res = await fetch(`${API_URL}/products`);
                 const data = await res.json();
-                
                 if (data.success) {
                     productList.innerHTML = data.products.map(product => createProductCard(product)).join('');
                 } else {
@@ -127,43 +147,71 @@
 
         // Show confirmation modal
         function showConfirmation(productId, productName, productPrice) {
-            selectedProductId = productId;
-            
-            document.getElementById('confirmationText').innerHTML = 
-                `Apakah Anda yakin ingin membeli <strong>${productName}</strong> dengan harga <strong>Rp ${productPrice.toLocaleString('id-ID')}</strong>?`;
-            
-            const sliderThumb = document.getElementById('sliderThumb');
-            sliderThumb.style.left = '0px';
-            sliderThumb.innerHTML = '→';
-            isSliderComplete = false;
-            document.getElementById('confirmButton').disabled = true;
-            
-            document.getElementById('confirmationModal').classList.remove('hidden');
-        }
+    selectedProductId = productId;
+    selectedProductName = productName;
+    const isReseller = productName.toLowerCase().includes('reseller');
+    document.getElementById('confirmationText').innerHTML = 
+        `Apakah Anda yakin ingin membeli <strong>${productName}</strong> dengan harga <strong>Rp ${productPrice.toLocaleString('id-ID')}</strong>?`;
+
+    // Tampilkan input reseller jika produk adalah paket reseller
+    const resellerInput = document.getElementById('resellerInput');
+    const resellerTerms = document.getElementById('resellerTerms');
+    if (isReseller) {
+        resellerInput.classList.remove('hidden');
+        resellerTerms.classList.remove('hidden');
+    } else {
+        resellerInput.classList.add('hidden');
+        resellerTerms.classList.add('hidden');
+    }
+
+    // Reset slider
+    const sliderThumb = document.getElementById('sliderThumb');
+    sliderThumb.style.left = '0px';
+    sliderThumb.innerHTML = '→';
+    isSliderComplete = false;
+    document.getElementById('confirmButton').disabled = true;
+
+    // Tampilkan modal
+    document.getElementById('confirmationModal').classList.remove('hidden');
+}
 
         // Generate invoice and redirect
-        async function generateInvoice(productId) {
-            try {
-                const response = await fetch(`${API_URL}/generate-invoice`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product_id: productId }),
-                });
+        async function generateInvoice(productId,productName) {
+    try {
+        // Ambil nama produk dari tombol yang diklik
+        const selectedButton = document.querySelector(`button[data-product-name]`);
 
-                const result = await response.json();
-                console.log(`API Response:`, result);
-
-                if (result.success) {
-                    window.location.href = `invoice?trx=${result.data.transaction_id}`;
-                } else {
-                    alert(`Gagal membuat invoice: ${result.message}`);
-                }
-            } catch (error) {
-                console.error(`Error:`, error);
-                alert(`Terjadi kesalahan dalam membuat invoice.`);
+        let requestBody = { product_id: productId };
+        const isReseller = productName?.toLowerCase().includes('reseller');
+        if (isReseller) {
+            const resellerUsername = document.getElementById('resellerUsername')?.value.trim();
+            if (!resellerUsername) {
+                alert('Username reseller tidak boleh kosong.');
+                return;
             }
+            requestBody.reseller_username = resellerUsername;
         }
 
+        const response = await fetch(`${API_URL}/generate-invoice`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody),
+        });
+
+        console.log(requestBody);
+        
+        const result = await response.json();
+        console.log(`API Response:`, result);
+        if (result.success) {
+            window.location.href = `invoice?trx=${result.data.transaction_id}`;
+        } else {
+            alert(`Gagal membuat invoice: ${result.message}`);
+        }
+    } catch (error) {
+        console.error(`Error:`, error);
+        alert(`Terjadi kesalahan dalam membuat invoice.`);
+    }
+}
         // Event listeners when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             const sliderThumb = document.getElementById('sliderThumb');
@@ -178,10 +226,8 @@
                 const sliderRect = slider.getBoundingClientRect();
                 const thumbRect = sliderThumb.getBoundingClientRect();
                 let newLeft = clientX - sliderRect.left - thumbRect.width / 2;
-
                 newLeft = Math.max(0, Math.min(newLeft, sliderRect.width - thumbRect.width));
                 sliderThumb.style.left = `${newLeft}px`;
-
                 if (newLeft >= sliderRect.width - thumbRect.width - 5) {
                     isSliderComplete = true;
                     confirmButton.disabled = false;
@@ -197,13 +243,11 @@
             sliderTrack.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 const touch = e.touches[0];
-
                 const moveHandler = (moveEvent) => {
                     moveEvent.preventDefault();
                     const currentTouch = moveEvent.touches[0];
                     handleSliderMove(currentTouch.clientX);
                 };
-
                 const endHandler = () => {
                     if (!isSliderComplete) {
                         sliderThumb.style.left = '0px';
@@ -211,7 +255,6 @@
                     document.removeEventListener('touchmove', moveHandler);
                     document.removeEventListener('touchend', endHandler);
                 };
-
                 document.addEventListener('touchmove', moveHandler);
                 document.addEventListener('touchend', endHandler);
             });
@@ -219,12 +262,10 @@
             // Mouse events for slider
             sliderTrack.addEventListener('mousedown', (e) => {
                 e.preventDefault();
-
                 const moveHandler = (moveEvent) => {
                     moveEvent.preventDefault();
                     handleSliderMove(moveEvent.clientX);
                 };
-
                 const upHandler = () => {
                     if (!isSliderComplete) {
                         sliderThumb.style.left = '0px';
@@ -232,16 +273,15 @@
                     document.removeEventListener('mousemove', moveHandler);
                     document.removeEventListener('mouseup', upHandler);
                 };
-
                 document.addEventListener('mousemove', moveHandler);
                 document.addEventListener('mouseup', upHandler);
             });
 
             // Confirm button click
             confirmButton.addEventListener('click', () => {
-                if (isSliderComplete && selectedProductId) {
+                if (isSliderComplete && selectedProductId ) {
                     confirmationModal.classList.add('hidden');
-                    generateInvoice(selectedProductId);
+                    generateInvoice(selectedProductId,selectedProductName);
                 }
             });
 
