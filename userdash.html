@@ -64,24 +64,32 @@
             </div>
             
             <!-- Account Info Card -->
-            <div class="bg-white rounded-xl shadow-lg p-5 mb-4">
-                <div class="flex items-center mb-4">
-                    <div class="bg-blue-100 text-blue-600 p-2 rounded-lg mr-3">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h2 class="text-lg font-semibold text-gray-800">Account Details</h2>
-                </div>
-                <div class="grid grid-cols-2 gap-3 text-sm">
-                    <div class="bg-gray-50 rounded-lg p-3">
-                        <p class="text-gray-500 mb-1">Transaction ID</p>
-                        <p class="font-medium text-gray-800" id="registratorDisplay">-</p>
-                    </div>
-                    <div class="bg-gray-50 rounded-lg p-3">
-                        <p class="text-gray-500 mb-1">Connected Devices</p>
-                        <p class="font-medium text-gray-800" id="deviceCountDisplay">0</p>
-                    </div>
-                </div>
-            </div>
+<!-- Modified Account Info Card with Expiration Date -->
+<div class="bg-white rounded-xl shadow-lg p-5 mb-4">
+    <div class="flex items-center mb-4">
+        <div class="bg-blue-100 text-blue-600 p-2 rounded-lg mr-3">
+            <i class="fas fa-user"></i>
+        </div>
+        <h2 class="text-lg font-semibold text-gray-800">Account Details</h2>
+    </div>
+    <div class="grid grid-cols-2 gap-3 text-sm mb-3">
+        <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-gray-500 mb-1">Transaction ID</p>
+            <p class="font-medium text-gray-800" id="registratorDisplay">-</p>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-gray-500 mb-1">Connected Devices</p>
+            <p class="font-medium text-gray-800" id="deviceCountDisplay">0</p>
+        </div>
+    </div>
+    <div class="bg-gray-50 rounded-lg p-3">
+        <p class="text-gray-500 mb-1">Expired On</p>
+        <div class="flex items-center">
+            <p class="font-medium text-gray-800" id="expirationDisplay">-</p>
+            <span id="expirationStatus" class="ml-2 px-2 py-1 text-xs rounded-full"></span>
+        </div>
+    </div>
+</div>
             
             <!-- Color Settings Card -->
             <div class="bg-white rounded-xl shadow-lg p-5 mb-4">
@@ -235,7 +243,7 @@ function refreshUserData() {
             userSession = response.data.data;
             localStorage.setItem('shaderSession', JSON.stringify(userSession));
             updateUserInfo();
-            console.log("User data refreshed successfully");
+            // console.log("User data refreshed successfully");
         } else {
             console.error("Failed to refresh user data:", response.data.reason);
             // Optional: Show notification if refresh fails
@@ -519,52 +527,86 @@ window.addEventListener('load', function() {
             updateColorPreview();
         }
 
-        function updateUserInfo() {
-            document.getElementById('userKeyDisplay').textContent = userSession.user_key;
-            document.getElementById('registratorDisplay').textContent = userSession.registrator || 'N/A';
-            
-            // Count devices
-            const deviceCount = userSession.devices ? userSession.devices.split(',').length : 0;
-            document.getElementById('deviceCountDisplay').textContent = deviceCount;
+       // Update the updateUserInfo function to include expiration date
+function updateUserInfo() {
+    document.getElementById('userKeyDisplay').textContent = userSession.user_key;
+    document.getElementById('registratorDisplay').textContent = userSession.registrator || 'N/A';
+    
+    // Count devices
+    const deviceCount = userSession.devices ? userSession.devices.split(',').length : 0;
+    document.getElementById('deviceCountDisplay').textContent = deviceCount;
 
-            // Set color if available
-            if (userSession.shader_color) {
-                try {
-                    // Parse shader color from vec4 format
-                    const colorRegex = /vec4\(([0-9.]+),\s*([0-9.]+),\s*([0-9.]+),\s*([0-9.]+)\)/;
-                    const match = userSession.shader_color.match(colorRegex);
-                    if (match) {
-                        const r = Math.round(parseFloat(match[1]) * 255);
-                        const g = Math.round(parseFloat(match[2]) * 255);
-                        const b = Math.round(parseFloat(match[3]) * 255);
-                        const a = parseFloat(match[4]);
-
-                        // Convert RGB to hex
-                        const hexColor = rgbToHex(r, g, b);
-
-                        // Set color picker and alpha values
-                        colorPicker.value = hexColor;
-                        alpha.value = a;
-                        
-                        // Update RGB sliders
-                        redSlider.value = r;
-                        greenSlider.value = g;
-                        blueSlider.value = b;
-                        hexInput.value = hexColor.slice(1);
-                        
-                        // Update display values
-                        redValue.textContent = r;
-                        greenValue.textContent = g;
-                        blueValue.textContent = b;
-
-                        // Update the color preview
-                        updateColorPreview();
-                    }
-                } catch (e) {
-                    console.error("Failed to parse shader color", e);
-                }
-            }
+    // Display expiration date
+    if (userSession.expired_date) {
+        const expirationDate = new Date(userSession.expired_date);
+        
+        const currentDate = new Date();
+        
+        // Format date as DD-MM-YYYY
+        const formattedDate = expirationDate.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        }).replace(/\//g, '-');
+        
+        document.getElementById('expirationDisplay').textContent = formattedDate;
+        
+        // Show expiration status with color
+        const expirationStatus = document.getElementById('expirationStatus');
+        if (expirationDate > currentDate) {
+            const daysRemaining = Math.ceil((expirationDate - currentDate) / (1000 * 60 * 60 * 24));
+            expirationStatus.textContent = `${daysRemaining} days left`;
+            expirationStatus.classList.add('bg-green-100', 'text-green-800');
+            expirationStatus.classList.remove('bg-red-100', 'text-red-800');
+        } else {
+            expirationStatus.textContent = 'Expired';
+            expirationStatus.classList.add('bg-red-100', 'text-red-800');
+            expirationStatus.classList.remove('bg-green-100', 'text-green-800');
         }
+    } else {
+        document.getElementById('expirationDisplay').textContent = 'N/A';
+        document.getElementById('expirationStatus').textContent = '';
+        document.getElementById('expirationStatus').className = 'ml-2 px-2 py-1 text-xs rounded-full';
+    }
+
+    // Set color if available
+    if (userSession.shader_color) {
+        try {
+            // Parse shader color from vec4 format
+            const colorRegex = /vec4\(([0-9.]+),\s*([0-9.]+),\s*([0-9.]+),\s*([0-9.]+)\)/;
+            const match = userSession.shader_color.match(colorRegex);
+            if (match) {
+                const r = Math.round(parseFloat(match[1]) * 255);
+                const g = Math.round(parseFloat(match[2]) * 255);
+                const b = Math.round(parseFloat(match[3]) * 255);
+                const a = parseFloat(match[4]);
+
+                // Convert RGB to hex
+                const hexColor = rgbToHex(r, g, b);
+
+                // Set color picker and alpha values
+                colorPicker.value = hexColor;
+                alpha.value = a;
+                
+                // Update RGB sliders
+                redSlider.value = r;
+                greenSlider.value = g;
+                blueSlider.value = b;
+                hexInput.value = hexColor.slice(1);
+                
+                // Update display values
+                redValue.textContent = r;
+                greenValue.textContent = g;
+                blueValue.textContent = b;
+
+                // Update the color preview
+                updateColorPreview();
+            }
+        } catch (e) {
+            console.error("Failed to parse shader color", e);
+        }
+    }
+}
 
         // Helper functions
         function hexToRgb(hex) {
